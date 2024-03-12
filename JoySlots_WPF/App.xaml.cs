@@ -1,0 +1,41 @@
+﻿using JoySlots_WPF.Model;
+using JoySlots_WPF.Services;
+using System.Diagnostics;
+using System.Windows;
+
+namespace JoySlots_WPF
+{
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+        private static GameSettings _gameSettings { get; set; }
+        public static GameSettings GameSettings { get => _gameSettings;}
+
+        private static Logger _logger { get; set; }
+        public static Logger Logger { get => _logger; }
+
+        private static PCInfo _pcInfo { get; set; }
+        public static PCInfo PCInfo { get => _pcInfo; }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            #if DEBUG
+            _logger = new Logger(true);
+            #else
+                _logger = new Logger(false);
+            #endif
+            _gameSettings = new GameSettings();
+            Logger.LogInfo("App", "Application Started");
+
+            this.MainWindow = new MainWindow();
+            _pcInfo = new PCInfo(MainWindow);
+
+            // Start the UI.
+            this.MainWindow.Show();
+        }
+    }
+}

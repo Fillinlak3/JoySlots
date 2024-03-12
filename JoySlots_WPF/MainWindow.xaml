@@ -1,0 +1,15 @@
+﻿<Window x:Class="JoySlots_WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JoySlots_WPF"
+        xmlns:view="clr-namespace:JoySlots_WPF.View"
+        mc:Ignorable="d"
+        Title="Joy Slots" Width="800" Height="500"
+        WindowState="Maximized" WindowStartupLocation="CenterScreen"
+        KeyDown="Window_KeyDown">
+    <Grid>
+        <view:SlotsGameView x:Name="slotsGameView"/>
+    </Grid>
+</Window>

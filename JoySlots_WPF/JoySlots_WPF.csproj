@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Command\" />
+    <Folder Include="Resources\Anim\" />
+	<Folder Include="Resources\Audio\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\gamble\black_back.png" />
+    <Resource Include="Resources\Images\gamble\cards_flickering.gif" />
+    <Resource Include="Resources\Images\gamble\Gamble_Win.png" />
+    <Resource Include="Resources\Images\gamble\hearts_symbol.png" />
+    <Resource Include="Resources\Images\gamble\hearts_symbol_big.png" />
+    <Resource Include="Resources\Images\gamble\hearts_symbol_win.png" />
+    <Resource Include="Resources\Images\gamble\red_back.png" />
+    <Resource Include="Resources\Images\gamble\small_card.png" />
+    <Resource Include="Resources\Images\gamble\spades_symbol.png" />
+    <Resource Include="Resources\Images\gamble\spades_symbol_big.png" />
+    <Resource Include="Resources\Images\gamble\spades_symbol_win.png" />
+    <Resource Include="Resources\Images\misc\Background.png" />
+    <Resource Include="Resources\Images\misc\Cash_In.png" />
+    <Resource Include="Resources\Images\misc\Logo.png" />
+    <Resource Include="Resources\Images\misc\Menu_Button.png" />
+    <Resource Include="Resources\Images\misc\Placebet_Buttons_Background.png" />
+    <Resource Include="Resources\Images\misc\Placebet_Buttons_Marked_Background.png" />
+    <Resource Include="Resources\Images\misc\Spin_Button.png" />
+    <Resource Include="Resources\Images\misc\Volume_Mid.png" />
+    <Resource Include="Resources\Images\misc\Volume_Min.png" />
+    <Resource Include="Resources\Images\misc\Volume_Mute.png" />
+    <Resource Include="Resources\Images\misc\Volume_Sound.png" />
+    <Resource Include="Resources\Images\symbols\Ali.jpg" />
+    <Resource Include="Resources\Images\symbols\Bucurie.jpg" />
+    <Resource Include="Resources\Images\symbols\Bucurie_2.jpeg" />
+    <Resource Include="Resources\Images\symbols\Bucurie_3.jpeg" />
+    <Resource Include="Resources\Images\symbols\Catanoiu.jpeg" />
+    <Resource Include="Resources\Images\symbols\Gabi.jpeg" />
+    <Resource Include="Resources\Images\symbols\Iris_2.jpeg" />
+    <Resource Include="Resources\Images\symbols\Jumi.jpg" />
+    <Resource Include="Resources\Images\symbols\Petru.jpeg" />
+    <Resource Include="Resources\Images\symbols\Rizea.jpeg" />
+    <Resource Include="Resources\Images\symbols\Robert.jpg" />
+    <Resource Include="Resources\Images\symbols\Rusu.jpg" />
+    <Resource Include="Resources\Images\symbols\Teo.jpeg" />
+  </ItemGroup>
+
+</Project>

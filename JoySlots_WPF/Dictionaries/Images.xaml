@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- misc -->
+    <BitmapImage x:Key="img_Background" UriSource="/Resources/Images/misc/Background.png"/>
+    <BitmapImage x:Key="img_Logo" UriSource="/Resources/Images/misc/Logo.png"/>
+    <BitmapImage x:Key="img_SpinButton" UriSource="/Resources/Images/misc/Spin_Button.png"/>
+    <BitmapImage x:Key="img_MenuButton" UriSource="/Resources/Images/misc/Menu_Button.png"/>
+    <BitmapImage x:Key="img_VolumeMax" UriSource="/Resources/Images/misc/Volume_Sound.png"/>
+
+    <!-- symbols -->
+    <BitmapImage x:Key="img_SY_Ali" UriSource="/Resources/Images/symbols/Ali.jpg"/>
+    <BitmapImage x:Key="img_SY_Bucurie" UriSource="/Resources/Images/symbols/Bucurie_2.jpeg"/>
+    <BitmapImage x:Key="img_SY_Catanoiu" UriSource="/Resources/Images/symbols/Catanoiu.jpeg"/>
+    <BitmapImage x:Key="img_SY_Gabi" UriSource="/Resources/Images/symbols/Gabi.jpeg"/>
+    <BitmapImage x:Key="img_SY_Iris" UriSource="/Resources/Images/symbols/Iris_2.jpeg"/>
+    <BitmapImage x:Key="img_SY_Jumi" UriSource="/Resources/Images/symbols/Jumi.jpg"/>
+    <BitmapImage x:Key="img_SY_Petru" UriSource="/Resources/Images/symbols/Petru.jpeg"/>
+    <BitmapImage x:Key="img_SY_Rizea" UriSource="/Resources/Images/symbols/Rizea.jpeg"/>
+    <BitmapImage x:Key="img_SY_Robert" UriSource="/Resources/Images/symbols/Robert.jpg"/>
+    <BitmapImage x:Key="img_SY_Rusu" UriSource="/Resources/Images/symbols/Rusu.jpg"/>
+    <BitmapImage x:Key="img_SY_Teo" UriSource="/Resources/Images/symbols/Teo.jpeg"/>
+</ResourceDictionary>
