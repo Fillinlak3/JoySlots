@@ -11,7 +11,7 @@
              Loaded="LoadView"
              Unloaded="UnloadView">
     <UserControl.DataContext>
-        <viewModels:SlotsGameViewModel/>
+        <viewModels:SlotsGameViewModel x:Name="Game"/>
     </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>

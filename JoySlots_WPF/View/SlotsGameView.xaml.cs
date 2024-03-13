@@ -1,8 +1,8 @@
 ﻿using JoySlots_WPF.Extensions;
+using JoySlots_WPF.Model;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace JoySlots_WPF.View
@@ -13,7 +13,6 @@ namespace JoySlots_WPF.View
     public partial class SlotsGameView : UserControl
     {
         private List<CancellationTokenSource> CancellationTokenSources;
-        private Dictionary<string, ImageSource> Symbols;
 
         #region LoadingView
         public SlotsGameView()
@@ -21,7 +20,6 @@ namespace JoySlots_WPF.View
             InitializeComponent();
 
             CancellationTokenSources = new List<CancellationTokenSource>();
-            Symbols = new Dictionary<string, ImageSource>();
         }
 
         private void LoadView(object sender, RoutedEventArgs e)
@@ -37,7 +35,32 @@ namespace JoySlots_WPF.View
                 {
                     // Add to list
                     keyname = keyname.Remove(0, keyname.LastIndexOf("_") + 1);
-                    Symbols.Add(keyname, bitmapImage);
+                    Symbol.RarityTag rarity;
+                    switch(keyname)
+                    {
+                        case "Iris":
+                            rarity = Symbol.RarityTag.Wild;
+                            break;
+                        case "Jumi":
+                            rarity = Symbol.RarityTag.Scatter;
+                            break;
+                        case "Ali":
+                            rarity = Symbol.RarityTag.Scatter;
+                            break;
+                        case "Robert":
+                            rarity = Symbol.RarityTag.VeryRare;
+                            break;
+                        case "Bucurie":
+                            rarity = Symbol.RarityTag.Rare;
+                            break;
+                        case "Teo":
+                            rarity = Symbol.RarityTag.Rare;
+                            break;
+                        default:
+                            rarity = Symbol.RarityTag.Common;
+                            break;
+                    }
+                    Game.Symbols.Add(new Symbol(keyname, bitmapImage, rarity));
                 }
             }
             App.Logger.LogInfo("SlotsGameView/LoadView", "Gathered symbols from Resources.");
@@ -46,7 +69,7 @@ namespace JoySlots_WPF.View
             {
                 for (int i = 0; i < ReelsGrid.RowDefinitions.Count; i++)
                 {
-                    ReelsGrid.SetChild(i, j, new Image() { Source = Symbols.Random("Iris", "Ali", "Jumi") });
+                    ReelsGrid.SetChild(i, j, new Image() { Source = Game.Symbols.Random("Iris", "Ali", "Jumi") });
                 }
             }
             App.GameSettings.CanSpin = true;
@@ -57,7 +80,7 @@ namespace JoySlots_WPF.View
         {
             App.GameSettings.CanSpin = false;
             CancellationTokenSources.Clear();
-            Symbols.Clear();
+            Game.Symbols.Clear();
         }
         #endregion
 
@@ -136,13 +159,13 @@ namespace JoySlots_WPF.View
 
                 // Reels 1 & 5 cant have special symbol IRIS
                 if (reel / 2 == 0 || reel / 2 == 4)
-                    ReelsGrid.SetChild(0, reel, new Image() { Source = Symbols.Random("Iris") });
+                    ReelsGrid.SetChild(0, reel, new Image() { Source = Game.Symbols.Random("Iris") });
                 // Reels 2 & 4 cant have special symbol JUMI
                 else if (reel / 2 == 1 || reel / 2 == 3)
-                    ReelsGrid.SetChild(0, reel, new Image() { Source = Symbols.Random("Jumi") });
+                    ReelsGrid.SetChild(0, reel, new Image() { Source = Game.Symbols.Random("Jumi") });
                 // Any symbol is allowed.
                 else
-                    ReelsGrid.SetChild(0, reel, new Image() { Source = Symbols.Random() });
+                    ReelsGrid.SetChild(0, reel, new Image() { Source = Game.Symbols.Random() });
 
                 await Task.Delay(rollingDelay);
             }
