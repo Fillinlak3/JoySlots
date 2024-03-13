@@ -109,7 +109,7 @@ namespace JoySlots_WPF.View
         private async Task CheckWin()
         {
             Debug.WriteLine("<CHECKING Game WIN>");
-            Game.CheckWinningLines(ReelsGrid);
+            List<WinningLine> WinningLines = Game.CheckWinningLines(ReelsGrid);
             await Task.Delay(200);
             Debug.WriteLine("<ENDED checking>");
             App.GameSettings.CanSpin = true;

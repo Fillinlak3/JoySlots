@@ -8,40 +8,6 @@ namespace JoySlots_WPF.ViewModel
 {
     public class SlotsGameViewModel : BaseViewModel
     {
-
-
-        public readonly struct WinningLine
-        {
-            public readonly int SymbolsCount = 0;
-            public readonly Symbol Symbol;
-            public readonly int Line = 0;
-            public readonly double CashValue = 0;
-            public readonly List<SymbolLocation>? SymbolsLocation;
-            public readonly bool IsWinningLine = true;
-
-            public WinningLine(int symbolsCount, Symbol symbol, int line, List<SymbolLocation>? symbolsLocation = null)
-            {
-                SymbolsCount = symbolsCount;
-                Symbol = symbol;
-                Line = line;
-                CashValue = symbol.GetValue(symbolsCount);
-                SymbolsLocation = symbolsLocation;
-
-                if (CashValue == 0) IsWinningLine = false;
-            }
-        }
-
-        public readonly struct SymbolLocation
-        {
-            public readonly int row;
-            public readonly int column;
-
-            public SymbolLocation(int row, int column)
-            {
-                this.row = row;
-                this.column = column;
-            }
-        }
         public Dictionary<int, List<SymbolLocation>> MapWinningLines { get; private set; }
         public List<Symbol> Symbols { get; set; }
 
@@ -64,7 +30,7 @@ namespace JoySlots_WPF.ViewModel
             Symbols = new List<Symbol>();
         }
 
-        public void CheckWinningLines(Grid ReelsGrid)
+        public List<WinningLine> CheckWinningLines(Grid ReelsGrid)
         {
             List<WinningLine> WinningLines = new List<WinningLine>();
 
@@ -155,21 +121,25 @@ namespace JoySlots_WPF.ViewModel
                         Symbols.FirstOrDefault(x => x.ImageSource == startingSymbol)!, line.Key));
             }
 
-            if (WinningLines.Count == 0 || WinningLines.All(x => x.CashValue == 0))
-                return;
-            string lineWon = string.Empty;
-            string AmountWon = string.Empty;
-            foreach (var line in WinningLines)
+            // Filter just active winning lines having an amount won.
+            WinningLines = WinningLines.Where(x => x.IsWinningLine).ToList();
+
+            if (WinningLines.Count > 0)
             {
-                if (line.CashValue != 0)
+                string lineWon = string.Empty;
+                string AmountWon = string.Empty;
+                foreach (var line in WinningLines)
                 {
                     lineWon += $"{line.Line}, ";
                     AmountWon += $"{line.CashValue}, ";
                 }
+                lineWon = lineWon.Remove(lineWon.Length - 1);
+                AmountWon = AmountWon.Remove(AmountWon.Length - 1);
+                App.Logger.LogInfo("SlotsGameViewModel/CheckWinningLines", $"Winning lines\nCount={WinningLines.Count}" +
+                    $"\nLines={lineWon}\nAmountWon={AmountWon}");
             }
 
-            App.Logger.LogInfo("SlotsGameViewModel/CheckWinningLines", $"Winning lines\nCount={WinningLines.Count}" +
-                $"\nLines={lineWon}\nAmountWon={AmountWon}");
+            return WinningLines;
         }
     }
 }
