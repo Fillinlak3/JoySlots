@@ -16,7 +16,8 @@ public static class ListExtension
         var commonSymbols = remainingSymbols.Where(x => x.Rarity == Symbol.RarityTag.Common).ToList();
 
         if (remainingSymbols.Count == 0)
-            throw new ArgumentNullException("List is null or all elements removed.");
+            return null;
+        //    throw new ArgumentNullException("List is null or all elements removed.");
 
         double symbolChanceGenerated = rand.NextDouble();
         Symbol symbol = commonSymbols[rand.Next(commonSymbols.Count)];

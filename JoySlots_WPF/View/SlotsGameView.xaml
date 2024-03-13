@@ -72,7 +72,7 @@
         </Grid>
 
         <!-- Bottom-Side Panel -->
-        <Grid Grid.Row="2" Grid.Column="1" Margin="10">
+        <Grid Grid.Row="2" Grid.Column="1" Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="*"/>
@@ -125,23 +125,40 @@
         </Grid>
 
         <!-- Reels -->
-        <Grid x:Name="ReelsGrid" Grid.Row="1" Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="20"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-        </Grid>
+        <Viewbox Stretch="Fill" StretchDirection="DownOnly" Grid.Row="1" Grid.Column="1">
+            <Grid x:Name="ReelsGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Image x:Name="SymbolCell_1" Grid.Row="0" Grid.Column="0" Margin="5, 0, 5, 0"/>
+                <Image x:Name="SymbolCell_3" Grid.Row="1" Grid.Column="0" Margin="5, 0, 5, 0"/>
+                <Image x:Name="SymbolCell_2" Grid.Row="2" Grid.Column="0" Margin="5, 0, 5, 0"/>
+
+                <Image x:Name="SymbolCell_4" Grid.Row="0" Grid.Column="1" Margin="5, 0, 5, 0"/>
+                <Image x:Name="SymbolCell_5" Grid.Row="1" Grid.Column="1" Margin="5, 0, 5, 0"/>
+                <Image x:Name="SymbolCell_6" Grid.Row="2" Grid.Column="1" Margin="5, 0, 5, 0"/>
+
+                <Image x:Name="SymbolCell_7" Grid.Row="0" Grid.Column="2" Margin="5, 0, 5, 0"/>
+                <Image x:Name="SymbolCell_8" Grid.Row="1" Grid.Column="2" Margin="5, 0, 5, 0"/>
+                <Image x:Name="SymbolCell_9" Grid.Row="2" Grid.Column="2" Margin="5, 0, 5, 0"/>
+
+                <Image x:Name="SymbolCell_10" Grid.Row="0" Grid.Column="3" Margin="5, 0, 5, 0"/>
+                <Image x:Name="SymbolCell_11" Grid.Row="1" Grid.Column="3" Margin="5, 0, 5, 0"/>
+                <Image x:Name="SymbolCell_12" Grid.Row="2" Grid.Column="3" Margin="5, 0, 5, 0"/>
+
+                <Image x:Name="SymbolCell_13" Grid.Row="0" Grid.Column="4" Margin="5, 0, 5, 0"/>
+                <Image x:Name="SymbolCell_14" Grid.Row="1" Grid.Column="4" Margin="5, 0, 5, 0"/>
+                <Image x:Name="SymbolCell_15" Grid.Row="2" Grid.Column="4" Margin="5, 0, 5, 0"/>
+            </Grid>
+        </Viewbox>
     </Grid>
 </UserControl>

@@ -65,11 +65,11 @@ namespace JoySlots_WPF.View
             }
             App.Logger.LogInfo("SlotsGameView/LoadView", "Gathered symbols from Resources.");
 
-            for (int j = 0; j < ReelsGrid.ColumnDefinitions.Count; j += 2)
+            for (int j = 0; j < ReelsGrid.ColumnDefinitions.Count; j++)
             {
                 for (int i = 0; i < ReelsGrid.RowDefinitions.Count; i++)
                 {
-                    ReelsGrid.SetChild(i, j, new Image() { Source = Game.Symbols.Random("Iris", "Ali", "Jumi") });
+                    ReelsGrid.GetChild(i, j)!.Source = Game.Symbols.Random("Iris", "Ali", "Jumi");
                 }
             }
             App.GameSettings.CanSpin = true;
@@ -109,9 +109,10 @@ namespace JoySlots_WPF.View
         private async Task CheckWin()
         {
             Debug.WriteLine("<CHECKING Game WIN>");
+            Game.CheckWinningLines(ReelsGrid);
             await Task.Delay(200);
-            App.GameSettings.CanSpin = true;
             Debug.WriteLine("<ENDED checking>");
+            App.GameSettings.CanSpin = true;
             App.Logger.LogInfo("SlotsGameView/CheckWin", "Game Win succeeded. CanSpin = True");
         }
 
@@ -129,7 +130,7 @@ namespace JoySlots_WPF.View
             {
                 CancellationTokenSources.Add(new CancellationTokenSource());
                 Task reel = new Task(async () => await
-                SpinReelAsync(i * 2, CancellationTokenSources[i].Token, delayRolling));
+                SpinReelAsync(i, CancellationTokenSources[i].Token, delayRolling));
                 reel.RunSynchronously();
             }
 
@@ -154,18 +155,18 @@ namespace JoySlots_WPF.View
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                ReelsGrid.SetChild(2, reel, new Image() { Source = (ReelsGrid.GetChild(1, reel) as Image)!.Source });
-                ReelsGrid.SetChild(1, reel, new Image() { Source = (ReelsGrid.GetChild(0, reel) as Image)!.Source });
+                (ReelsGrid.GetChild(2, reel) as Image)!.Source = (ReelsGrid.GetChild(1, reel) as Image)!.Source;
+                (ReelsGrid.GetChild(1, reel) as Image)!.Source = (ReelsGrid.GetChild(0, reel) as Image)!.Source;
 
                 // Reels 1 & 5 cant have special symbol IRIS
-                if (reel / 2 == 0 || reel / 2 == 4)
-                    ReelsGrid.SetChild(0, reel, new Image() { Source = Game.Symbols.Random("Iris") });
+                if (reel == 0 || reel == 4)
+                    (ReelsGrid.GetChild(0, reel) as Image)!.Source = Game.Symbols.Random("Iris");
                 // Reels 2 & 4 cant have special symbol JUMI
-                else if (reel / 2 == 1 || reel / 2 == 3)
-                    ReelsGrid.SetChild(0, reel, new Image() { Source = Game.Symbols.Random("Jumi") });
+                else if (reel == 1 || reel == 3)
+                    (ReelsGrid.GetChild(0, reel) as Image)!.Source = Game.Symbols.Random("Jumi");
                 // Any symbol is allowed.
                 else
-                    ReelsGrid.SetChild(0, reel, new Image() { Source = Game.Symbols.Random() });
+                    (ReelsGrid.GetChild(0, reel) as Image)!.Source = Game.Symbols.Random();
 
                 await Task.Delay(rollingDelay);
             }

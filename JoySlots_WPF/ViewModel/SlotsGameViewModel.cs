@@ -1,9 +1,36 @@
 ﻿using JoySlots_WPF.Model;
+using System.Windows.Controls;
+using JoySlots_WPF.Extensions;
+using System.Windows.Media;
+using System.Diagnostics;
 
 namespace JoySlots_WPF.ViewModel
 {
     public class SlotsGameViewModel : BaseViewModel
     {
+
+
+        public readonly struct WinningLine
+        {
+            public readonly int SymbolsCount = 0;
+            public readonly Symbol Symbol;
+            public readonly int Line = 0;
+            public readonly double CashValue = 0;
+            public readonly List<SymbolLocation>? SymbolsLocation;
+            public readonly bool IsWinningLine = true;
+
+            public WinningLine(int symbolsCount, Symbol symbol, int line, List<SymbolLocation>? symbolsLocation = null)
+            {
+                SymbolsCount = symbolsCount;
+                Symbol = symbol;
+                Line = line;
+                CashValue = symbol.GetValue(symbolsCount);
+                SymbolsLocation = symbolsLocation;
+
+                if (CashValue == 0) IsWinningLine = false;
+            }
+        }
+
         public readonly struct SymbolLocation
         {
             public readonly int row;
@@ -35,6 +62,114 @@ namespace JoySlots_WPF.ViewModel
             };
 
             Symbols = new List<Symbol>();
+        }
+
+        public void CheckWinningLines(Grid ReelsGrid)
+        {
+            List<WinningLine> WinningLines = new List<WinningLine>();
+
+            // Scatter Star
+            ImageSource ScatterStar = Symbols.FirstOrDefault(x => x.Name == "Jumi")!.ImageSource;
+            List<SymbolLocation> ScatterStarsLocation = new List<SymbolLocation>();
+            int stars = 0;
+            for (int reel = 0; reel < ReelsGrid.ColumnDefinitions.Count; reel += 2)
+            {
+                bool stillCounting = false;
+                for (int i = 0; i < ReelsGrid.RowDefinitions.Count; i++)
+                {
+                    if (ReelsGrid.GetChild(i, reel)!.Source == ScatterStar)
+                    {
+                        ScatterStarsLocation.Add(new SymbolLocation(i, reel));
+                        stillCounting = true;
+                        stars++;
+                    }
+
+                    if (stillCounting == false) break;
+                }
+            }
+            if (stars == 3)
+            {
+                WinningLines.Add(new WinningLine(stars,
+                    Symbols.FirstOrDefault(x => x.Name == "Jumi")!, 0, ScatterStarsLocation));
+                Debug.WriteLine("STARSS");
+            }
+            ScatterStarsLocation.Clear();
+
+            // Scatter Dollar
+            ImageSource ScatterDollar = Symbols.FirstOrDefault(x => x.Name == "Ali")!.ImageSource;
+            List<SymbolLocation> ScatterDollarsLocation = new List<SymbolLocation>();
+            int dollars = 0;
+            for (int reel = 0; reel < ReelsGrid.ColumnDefinitions.Count; reel++)
+            {
+                bool stillCounting = false;
+                for (int i = 0; i < ReelsGrid.RowDefinitions.Count; i++)
+                {
+                    if (ReelsGrid.GetChild(i, reel)!.Source == ScatterDollar)
+                    {
+                        ScatterDollarsLocation.Add(new SymbolLocation(i, reel));
+                        stillCounting = true;
+                        dollars++;
+                    }
+
+                    if (stillCounting == false) break;
+                }
+            }
+            if (dollars >= 3)
+            {
+                WinningLines.Add(new WinningLine(stars,
+                    Symbols.FirstOrDefault(x => x.Name == "Ali")!, 0, ScatterDollarsLocation));
+                Debug.WriteLine("DOLARSS");
+            }
+            ScatterDollarsLocation.Clear();
+
+            // Wilds
+            List<int> reelsHavingWild = new List<int>();
+            ImageSource Wild = Symbols.FirstOrDefault(x => x.Name == "Iris")!.ImageSource;
+            for (int reel = 0; reel < ReelsGrid.ColumnDefinitions.Count; reel++)
+            {
+                if (ReelsGrid.GetChild(0, reel)!.Source == Wild ||
+                   ReelsGrid.GetChild(1, reel)!.Source == Wild ||
+                   ReelsGrid.GetChild(2, reel)!.Source == Wild)
+                    reelsHavingWild.Add(reel);
+            }
+
+            foreach (var line in MapWinningLines)
+            {
+                int symbolsCount = 1;
+                ImageSource startingSymbol = ReelsGrid.GetChild(line.Value[0].row, line.Value[0].column)!.Source;
+
+                // Avoid scatters.
+                if (startingSymbol == ScatterStar || startingSymbol == ScatterDollar)
+                    continue;
+
+                for(int i = 1; i <  line.Value.Count; i++)
+                {
+                    ImageSource currentSymbol = ReelsGrid.GetChild(line.Value[i].row, line.Value[i].column)!.Source;
+                    if (reelsHavingWild.Contains(i) || currentSymbol == startingSymbol)
+                        symbolsCount++;
+                    else break;
+                }
+
+                if (symbolsCount >= 2)
+                    WinningLines.Add(new WinningLine(symbolsCount,
+                        Symbols.FirstOrDefault(x => x.ImageSource == startingSymbol)!, line.Key));
+            }
+
+            if (WinningLines.Count == 0 || WinningLines.All(x => x.CashValue == 0))
+                return;
+            string lineWon = string.Empty;
+            string AmountWon = string.Empty;
+            foreach (var line in WinningLines)
+            {
+                if (line.CashValue != 0)
+                {
+                    lineWon += $"{line.Line}, ";
+                    AmountWon += $"{line.CashValue}, ";
+                }
+            }
+
+            App.Logger.LogInfo("SlotsGameViewModel/CheckWinningLines", $"Winning lines\nCount={WinningLines.Count}" +
+                $"\nLines={lineWon}\nAmountWon={AmountWon}");
         }
     }
 }

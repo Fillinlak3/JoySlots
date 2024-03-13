@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:JoySlots_WPF"
         xmlns:view="clr-namespace:JoySlots_WPF.View"
         mc:Ignorable="d"
-        Title="Joy Slots" Width="800" Height="500"
+        Title="Joy Slots" MinWidth="800.80" MinHeight="450.45"
         WindowState="Maximized" WindowStartupLocation="CenterScreen"
-        KeyDown="Window_KeyDown">
+        KeyDown="Window_KeyDown" SizeChanged="Window_SizeChanged">
     <Grid>
         <view:SlotsGameView x:Name="slotsGameView"/>
     </Grid>

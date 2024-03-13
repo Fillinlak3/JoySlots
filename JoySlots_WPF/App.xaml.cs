@@ -19,20 +19,24 @@ namespace JoySlots_WPF
         private static PCInfo _pcInfo { get; set; }
         public static PCInfo PCInfo { get => _pcInfo; }
 
-        protected override void OnStartup(StartupEventArgs e)
+        static App()
         {
-            base.OnStartup(e);
-
             #if DEBUG
             _logger = new Logger(true);
             #else
                 _logger = new Logger(false);
             #endif
+
             _gameSettings = new GameSettings();
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
             Logger.LogInfo("App", "Application Started");
 
             this.MainWindow = new MainWindow();
-            _pcInfo = new PCInfo(MainWindow);
+            _pcInfo = new PCInfo(this.MainWindow);
 
             // Start the UI.
             this.MainWindow.Show();
