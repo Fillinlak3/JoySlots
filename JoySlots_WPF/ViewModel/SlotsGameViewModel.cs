@@ -67,22 +67,18 @@ namespace JoySlots_WPF.ViewModel
             int dollars = 0;
             for (int reel = 0; reel < ReelsGrid.ColumnDefinitions.Count; reel++)
             {
-                bool stillCounting = false;
                 for (int i = 0; i < ReelsGrid.RowDefinitions.Count; i++)
                 {
                     if (ReelsGrid.GetChild(i, reel)!.Source == ScatterDollar)
                     {
                         ScatterDollarsLocation.Add(new SymbolLocation(i, reel));
-                        stillCounting = true;
                         dollars++;
                     }
-
-                    if (stillCounting == false) break;
                 }
             }
             if (dollars >= 3)
             {
-                WinningLines.Add(new WinningLine(stars,
+                WinningLines.Add(new WinningLine(dollars,
                     Symbols.FirstOrDefault(x => x.Name == "Ali")!, 0, ScatterDollarsLocation));
                 Debug.WriteLine("DOLARSS");
             }
@@ -118,11 +114,26 @@ namespace JoySlots_WPF.ViewModel
                     if (reelsHavingWild.ContainsKey(i) || currentSymbol == startingSymbol)
                     {
                         symbolsCount++;
+                    }
+                    else break;
+                }
 
-                        /*
-                            If a wild was used to wire up a line, animate its appearance if wasn't done already.
-                            Check if isn't already animated by the state of it's boolean value. (true = need to animate)
-                        */
+                if (symbolsCount >= 2)
+                {
+                    WinningLines.Add(new WinningLine(symbolsCount,
+                        Symbols.FirstOrDefault(x => x.ImageSource == startingSymbol)!, line.Key));
+
+                    // Check if it's a winning line.
+                    if (WinningLines.Last().IsWinningLine == false)
+                    { WinningLines.Remove(WinningLines.Last()); continue; }
+
+                    /*
+                        If a wild was used to wire up a line, animate its appearance if wasn't done already.
+                        Check if isn't already animated by the state of it's boolean value. (true = need to animate)
+                        Animate the wilds only when it's a winning line.
+                    */
+                    for (int i = 1; i < symbolsCount && i < ReelsGrid.ColumnDefinitions.Count - 1; i++)
+                    {
                         if (reelsHavingWild.ContainsKey(i) && reelsHavingWild[i])
                         {
                             reelsHavingWild[i] = false;
@@ -137,17 +148,12 @@ namespace JoySlots_WPF.ViewModel
                             }
                         }
                     }
-                    else break;
                 }
-
-                if (symbolsCount >= 2)
-                    WinningLines.Add(new WinningLine(symbolsCount,
-                        Symbols.FirstOrDefault(x => x.ImageSource == startingSymbol)!, line.Key));
             }
             reelsHavingWild.Clear();
 
             // Filter just active winning lines having an amount won.
-            WinningLines = WinningLines.Where(x => x.IsWinningLine).ToList();
+            //WinningLines = WinningLines.Where(x => x.IsWinningLine).ToList();
 
             if (WinningLines.Count > 0)
             {
