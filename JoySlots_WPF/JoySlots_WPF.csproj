@@ -9,12 +9,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Anim\burning_outline_anim.gif" />
+    <None Remove="Resources\Anim\fire_burning.gif" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Command\" />
-    <Folder Include="Resources\Anim\" />
 	<Folder Include="Resources\Audio\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Anim\burning_outline_anim.gif" />
+    <Resource Include="Resources\Anim\fire_burning.gif" />
     <Resource Include="Resources\Images\gamble\black_back.png" />
     <Resource Include="Resources\Images\gamble\cards_flickering.gif" />
     <Resource Include="Resources\Images\gamble\Gamble_Win.png" />

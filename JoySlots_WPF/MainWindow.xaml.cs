@@ -14,7 +14,7 @@ namespace JoySlots_WPF
             _lastWindowState = this.WindowState;
         }
 
-        private void Window_KeyDown(object sender, KeyEventArgs e)
+        private void Window_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Space)
                 slotsGameView.SpinButton_Click(sender, e);

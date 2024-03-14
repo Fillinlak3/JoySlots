@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="Joy Slots" MinWidth="800.80" MinHeight="450.45"
         WindowState="Maximized" WindowStartupLocation="CenterScreen"
-        KeyDown="Window_KeyDown" SizeChanged="Window_SizeChanged">
+        KeyUp="Window_KeyUp" SizeChanged="Window_SizeChanged">
     <Grid>
         <view:SlotsGameView x:Name="slotsGameView"/>
     </Grid>

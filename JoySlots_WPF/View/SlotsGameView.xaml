@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:JoySlots_WPF.View"
              xmlns:userControls="clr-namespace:JoySlots_WPF.View.custom_controls"
              xmlns:viewModels="clr-namespace:JoySlots_WPF.ViewModel"
+             xmlns:gif="http://wpfanimatedgif.codeplex.com"
              mc:Ignorable="d" 
              d:DesignWidth="1920" d:DesignHeight="1080"
              Loaded="LoadView"

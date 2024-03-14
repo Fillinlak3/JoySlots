@@ -7,6 +7,10 @@
     <BitmapImage x:Key="img_MenuButton" UriSource="/Resources/Images/misc/Menu_Button.png"/>
     <BitmapImage x:Key="img_VolumeMax" UriSource="/Resources/Images/misc/Volume_Sound.png"/>
 
+    <!-- anim -->
+    <BitmapImage x:Key="anim_BurningLinesOutlined" UriSource="/Resources/Anim/burning_outline_anim.gif"/>
+    <BitmapImage x:Key="anim_BurningLines" UriSource="/Resources/Anim/fire_burning.gif"/>
+    
     <!-- symbols -->
     <BitmapImage x:Key="img_SY_Ali" UriSource="/Resources/Images/symbols/Ali.jpg"/>
     <BitmapImage x:Key="img_SY_Bucurie" UriSource="/Resources/Images/symbols/Bucurie_2.jpeg"/>

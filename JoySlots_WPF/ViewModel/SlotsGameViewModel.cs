@@ -125,6 +125,7 @@ namespace JoySlots_WPF.ViewModel
 
                     // Check if it's a winning line.
                     if (WinningLines.Last().IsWinningLine == false)
+                    // Filter just active winning lines having an amount won.
                     { WinningLines.Remove(WinningLines.Last()); continue; }
 
                     /*
@@ -151,9 +152,6 @@ namespace JoySlots_WPF.ViewModel
                 }
             }
             reelsHavingWild.Clear();
-
-            // Filter just active winning lines having an amount won.
-            //WinningLines = WinningLines.Where(x => x.IsWinningLine).ToList();
 
             if (WinningLines.Count > 0)
             {

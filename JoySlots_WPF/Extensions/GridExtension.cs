@@ -17,11 +17,11 @@ namespace JoySlots_WPF.Extensions
             return null;
         }
 
-        public static void SetChild(this Grid grid, int row, int column, UIElement element)
+        public static void SetChild(this Grid grid, int row, int column, UIElement element, bool forAnimation = false)
         {
             // Check if already exists and need to be replaced => delete old assign new.
             UIElement? _el = GetChild(grid, row, column);
-            if (_el != null)
+            if (_el != null && forAnimation == false)
                 grid.Children.Remove(_el);
 
             Grid.SetRow(element, row);

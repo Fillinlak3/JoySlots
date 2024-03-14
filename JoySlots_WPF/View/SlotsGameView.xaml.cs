@@ -1,10 +1,12 @@
 ﻿using JoySlots_WPF.Extensions;
 using JoySlots_WPF.Model;
 using System.Diagnostics;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using WpfAnimatedGif;
 
 namespace JoySlots_WPF.View
 {
@@ -36,31 +38,16 @@ namespace JoySlots_WPF.View
                 {
                     // Add to list
                     keyname = keyname.Remove(0, keyname.LastIndexOf("_") + 1);
-                    Symbol.RarityTag rarity;
-                    switch(keyname)
+                    var rarity = keyname switch
                     {
-                        case "Iris":
-                            rarity = Symbol.RarityTag.Wild;
-                            break;
-                        case "Jumi":
-                            rarity = Symbol.RarityTag.Scatter;
-                            break;
-                        case "Ali":
-                            rarity = Symbol.RarityTag.Scatter;
-                            break;
-                        case "Robert":
-                            rarity = Symbol.RarityTag.VeryRare;
-                            break;
-                        case "Bucurie":
-                            rarity = Symbol.RarityTag.Rare;
-                            break;
-                        case "Teo":
-                            rarity = Symbol.RarityTag.Rare;
-                            break;
-                        default:
-                            rarity = Symbol.RarityTag.Common;
-                            break;
-                    }
+                        "Iris" => Symbol.RarityTag.Wild,
+                        "Jumi" => Symbol.RarityTag.Scatter,
+                        "Ali" => Symbol.RarityTag.Scatter,
+                        "Robert" => Symbol.RarityTag.VeryRare,
+                        "Bucurie" => Symbol.RarityTag.Rare,
+                        "Teo" => Symbol.RarityTag.Rare,
+                        _ => Symbol.RarityTag.Common,
+                    };
                     Game.Symbols.Add(new Symbol(keyname, bitmapImage, rarity));
                 }
             }
@@ -93,13 +80,26 @@ namespace JoySlots_WPF.View
                 await Task.Delay(50);
                 foreach (var tokenSource in CancellationTokenSources)
                     tokenSource.Cancel();
-
                 CancellationTokenSources.Clear();
-                await Task.Delay(100);
-                return;
+
+                // Delay when spamming the button with this.
+                await Task.Delay(200);
+
+                /*
+                    -> When spinning reels and force stop, this is used to press again the spin to spin the reels.
+                    -> But when it's animating the winning lines, when pressed again to spin, it will automatically start
+                    spinning the reels.
+                (it's animating the winning lines when it's just 1 cancellation token)
+                 */
+                if(CancellationTokenSources.Count > 1)
+                    return;
             }
             if (App.GameSettings.CanSpin == false) return;
             else App.GameSettings.CanSpin = false;
+
+            // Remove all animations.
+            if (ReelsGrid.Children.Count > 15)
+                ReelsGrid.Children.RemoveRange(15, ReelsGrid.Children.Count);
 
             Debug.WriteLine("[SPINNING]");
             await SpinReelsAsync();
@@ -110,15 +110,81 @@ namespace JoySlots_WPF.View
         private async Task CheckWin()
         {
             Debug.WriteLine("<CHECKING Game WIN>");
-            await Task.Delay(200);
             List<WinningLine> WinningLines = await Game.CheckWinningLines(ReelsGrid);
             Debug.WriteLine("<ENDED checking>");
-            await Task.Delay(200);
+            await Task.Delay(100);
+
+            // Antimation BURNING the winning lines.
+            if (WinningLines.Count > 0)
+            {
+                Debug.WriteLine("<Animation BURNING Winning Lines>");
+                ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;
+                foreach (var line in WinningLines)
+                {
+                    if (Game.MapWinningLines.ContainsKey(line.Line))
+                    {
+                        for (int i = 0; i < line.SymbolsCount; i++)
+                        {
+                            SymbolLocation symbolLocation = Game.MapWinningLines[line.Line][i];
+                            ReelsGrid.SetChild(symbolLocation.row, symbolLocation.column, new Image(), true);
+                            int index = ReelsGrid.Children.Count - 1;
+                            Image animImage = (ReelsGrid.Children[index] as Image)!;
+                            Grid.SetZIndex(animImage, 1);
+                            ImageBehavior.SetAnimatedSource(animImage, burningLinesAnim);
+                        }
+                    }
+                }
+
+                CancellationTokenSources.Add(new CancellationTokenSource());
+                // Animation BURN each winning line using the animated outline.
+                await AnimateWinningLinesAsync(WinningLines, CancellationTokenSources.First().Token);
+            }
+
+            // Removed cuz it's better to be placed in the spinning button.
+            // Task.Delay(200);
             App.GameSettings.CanSpin = true;
             App.Logger.LogInfo("SlotsGameView/CheckWin", "Game Win succeeded. CanSpin = True");
         }
 
-        #region SpinReelsAnim
+        #region Animations
+        private async Task AnimateWinningLinesAsync(List<WinningLine> WinningLines, CancellationToken cancellationToken)
+        {
+            ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;
+            ImageSource burningLinesOutlinedAnim = (this.FindResource("anim_BurningLinesOutlined") as BitmapImage)!;
+            try
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    int index = 15;
+                    foreach (var line in WinningLines)
+                    {
+                        if (cancellationToken.IsCancellationRequested) break;
+
+                        if (Game.MapWinningLines.ContainsKey(line.Line))
+                        {
+                            for (int i = 0; i < line.SymbolsCount && !cancellationToken.IsCancellationRequested; i++, index++)
+                            {
+                                SymbolLocation symbolLocation = Game.MapWinningLines[line.Line][i];
+                                Image animImage = (ReelsGrid.Children[index] as Image)!;
+                                ImageBehavior.SetAnimatedSource(animImage, burningLinesOutlinedAnim);
+                            }
+
+                            await Task.Delay(2500, cancellationToken);
+                            index -= line.SymbolsCount;
+
+                            for (int i = 0; i < line.SymbolsCount && !cancellationToken.IsCancellationRequested; i++, index++)
+                            {
+                                SymbolLocation symbolLocation = Game.MapWinningLines[line.Line][i];
+                                Image animImage = (ReelsGrid.Children[index] as Image)!;
+                                ImageBehavior.SetAnimatedSource(animImage, burningLinesAnim);
+                            }
+                        }
+                    }
+                }
+            }
+            catch(Exception) { }
+        }
+
         private async Task SpinReelsAsync()
         {
             TimeSpan delay = TimeSpan.FromSeconds(0.2);
