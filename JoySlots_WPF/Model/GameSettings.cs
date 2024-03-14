@@ -14,6 +14,7 @@
         public double CreditValue { get; private set; } = 0.01f;
         public double BetValue { get; private set; } = 0.20f;
         public bool CanSpin { get; set; } = false;
+        public bool BurningLinesAnimation { get; set; } = false;
 
         public enum Volume_State
         {

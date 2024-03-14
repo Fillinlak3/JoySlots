@@ -91,11 +91,12 @@ namespace JoySlots_WPF.View
                     spinning the reels.
                 (it's animating the winning lines when it's just 1 cancellation token)
                  */
-                if(CancellationTokenSources.Count > 1)
+                if(App.GameSettings.BurningLinesAnimation == false)
                     return;
             }
             if (App.GameSettings.CanSpin == false) return;
-            else App.GameSettings.CanSpin = false;
+            App.GameSettings.BurningLinesAnimation = false;
+            App.GameSettings.CanSpin = false;
 
             // Remove all animations.
             if (ReelsGrid.Children.Count > 15)
@@ -118,6 +119,7 @@ namespace JoySlots_WPF.View
             if (WinningLines.Count > 0)
             {
                 Debug.WriteLine("<Animation BURNING Winning Lines>");
+                App.GameSettings.BurningLinesAnimation = true;
                 ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;
                 foreach (var line in WinningLines)
                 {
