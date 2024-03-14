@@ -30,7 +30,7 @@ namespace JoySlots_WPF.ViewModel
             Symbols = new List<Symbol>();
         }
 
-        public List<WinningLine> CheckWinningLines(Grid ReelsGrid)
+        public async Task<List<WinningLine>> CheckWinningLines(Grid ReelsGrid)
         {
             List<WinningLine> WinningLines = new List<WinningLine>();
 
@@ -89,16 +89,19 @@ namespace JoySlots_WPF.ViewModel
             ScatterDollarsLocation.Clear();
 
             // Wilds
-            List<int> reelsHavingWild = new List<int>();
+            // int = the reel, bool = true => need to display anim.
+            Dictionary<int, bool> reelsHavingWild = new Dictionary<int, bool>();
             ImageSource Wild = Symbols.FirstOrDefault(x => x.Name == "Iris")!.ImageSource;
-            for (int reel = 0; reel < ReelsGrid.ColumnDefinitions.Count; reel++)
+            for (int reel = 1; reel < ReelsGrid.ColumnDefinitions.Count - 1; reel++)
             {
-                if (ReelsGrid.GetChild(0, reel)!.Source == Wild ||
-                   ReelsGrid.GetChild(1, reel)!.Source == Wild ||
-                   ReelsGrid.GetChild(2, reel)!.Source == Wild)
-                    reelsHavingWild.Add(reel);
+                for (int i = 0; i < ReelsGrid.RowDefinitions.Count; i++)
+                {
+                    if (ReelsGrid.GetChild(i, reel)!.Source == Wild && !reelsHavingWild.ContainsKey(reel))
+                        reelsHavingWild.Add(reel, true);
+                }
             }
 
+            // Commons
             foreach (var line in MapWinningLines)
             {
                 int symbolsCount = 1;
@@ -110,9 +113,30 @@ namespace JoySlots_WPF.ViewModel
 
                 for(int i = 1; i <  line.Value.Count; i++)
                 {
+                    // Get all symbols from the winning line. Wild is included as wiring for symbols.
                     ImageSource currentSymbol = ReelsGrid.GetChild(line.Value[i].row, line.Value[i].column)!.Source;
-                    if (reelsHavingWild.Contains(i) || currentSymbol == startingSymbol)
+                    if (reelsHavingWild.ContainsKey(i) || currentSymbol == startingSymbol)
+                    {
                         symbolsCount++;
+
+                        /*
+                            If a wild was used to wire up a line, animate its appearance if wasn't done already.
+                            Check if isn't already animated by the state of it's boolean value. (true = need to animate)
+                        */
+                        if (reelsHavingWild.ContainsKey(i) && reelsHavingWild[i])
+                        {
+                            reelsHavingWild[i] = false;
+                            for (int j = 0; j < ReelsGrid.RowDefinitions.Count; j++)
+                            {
+                                Image symbol = ReelsGrid.GetChild(j, i)!;
+                                if (symbol.Source != Wild)
+                                {
+                                    symbol.Source = Symbols.FirstOrDefault(x => x.Name == "Iris")!.ImageSource;
+                                    await Task.Delay(300);
+                                }
+                            }
+                        }
+                    }
                     else break;
                 }
 
@@ -120,6 +144,7 @@ namespace JoySlots_WPF.ViewModel
                     WinningLines.Add(new WinningLine(symbolsCount,
                         Symbols.FirstOrDefault(x => x.ImageSource == startingSymbol)!, line.Key));
             }
+            reelsHavingWild.Clear();
 
             // Filter just active winning lines having an amount won.
             WinningLines = WinningLines.Where(x => x.IsWinningLine).ToList();
@@ -133,8 +158,8 @@ namespace JoySlots_WPF.ViewModel
                     lineWon += $"{line.Line}, ";
                     AmountWon += $"{line.CashValue}, ";
                 }
-                lineWon = lineWon.Remove(lineWon.Length - 1);
-                AmountWon = AmountWon.Remove(AmountWon.Length - 1);
+                lineWon = lineWon.Remove(lineWon.Length - 2);
+                AmountWon = AmountWon.Remove(AmountWon.Length - 2);
                 App.Logger.LogInfo("SlotsGameViewModel/CheckWinningLines", $"Winning lines\nCount={WinningLines.Count}" +
                     $"\nLines={lineWon}\nAmountWon={AmountWon}");
             }

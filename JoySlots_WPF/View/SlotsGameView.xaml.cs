@@ -3,6 +3,7 @@ using JoySlots_WPF.Model;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace JoySlots_WPF.View
@@ -109,9 +110,10 @@ namespace JoySlots_WPF.View
         private async Task CheckWin()
         {
             Debug.WriteLine("<CHECKING Game WIN>");
-            List<WinningLine> WinningLines = Game.CheckWinningLines(ReelsGrid);
             await Task.Delay(200);
+            List<WinningLine> WinningLines = await Game.CheckWinningLines(ReelsGrid);
             Debug.WriteLine("<ENDED checking>");
+            await Task.Delay(200);
             App.GameSettings.CanSpin = true;
             App.Logger.LogInfo("SlotsGameView/CheckWin", "Game Win succeeded. CanSpin = True");
         }
@@ -153,25 +155,41 @@ namespace JoySlots_WPF.View
 
         private async Task SpinReelAsync(int reel, CancellationToken cancellationToken, TimeSpan rollingDelay)
         {
+            ImageSource Wild = Game.Symbols.FirstOrDefault(x => x.Name == "Iris")!.ImageSource;
+            ImageSource ScatterStar = Game.Symbols.FirstOrDefault(x => x.Name == "Jumi")!.ImageSource;
+            ImageSource ScatterDollar = Game.Symbols.FirstOrDefault(x => x.Name == "Ali")!.ImageSource;
+
             while (!cancellationToken.IsCancellationRequested)
             {
-                (ReelsGrid.GetChild(2, reel) as Image)!.Source = (ReelsGrid.GetChild(1, reel) as Image)!.Source;
-                (ReelsGrid.GetChild(1, reel) as Image)!.Source = (ReelsGrid.GetChild(0, reel) as Image)!.Source;
+                Image TopImage = ReelsGrid.GetChild(0, reel)!;
+                Image MiddleImage = ReelsGrid.GetChild(1, reel)!;
+                Image BottomImage = ReelsGrid.GetChild(2, reel)!;
+
+                BottomImage.Source = MiddleImage.Source;
+                MiddleImage.Source = TopImage.Source;
 
                 // Reels 1 & 5 cant have special symbol IRIS
                 if (reel == 0 || reel == 4)
-                    (ReelsGrid.GetChild(0, reel) as Image)!.Source = Game.Symbols.Random("Iris");
+                    TopImage.Source = Game.Symbols.Random("Iris");
                 // Reels 2 & 4 cant have special symbol JUMI
                 else if (reel == 1 || reel == 3)
-                    (ReelsGrid.GetChild(0, reel) as Image)!.Source = Game.Symbols.Random("Jumi");
+                    TopImage.Source = Game.Symbols.Random("Jumi");
                 // Any symbol is allowed.
-                else
-                    (ReelsGrid.GetChild(0, reel) as Image)!.Source = Game.Symbols.Random();
+                else TopImage.Source = Game.Symbols.Random();
+
+                /*
+                    Avoid multiple symbols of type Wild / Scatter on the same reel.
+                    Also avoid adding another `special symbol` if any already exists.
+                */
+                if (MiddleImage.Source == Wild || BottomImage.Source == Wild ||
+                    MiddleImage.Source == ScatterStar || BottomImage.Source == ScatterStar ||
+                    MiddleImage.Source == ScatterDollar || BottomImage.Source == ScatterDollar)
+                    TopImage.Source = Game.Symbols.Random("Iris", "Jumi", "Ali");
 
                 await Task.Delay(rollingDelay);
             }
         }
-
+        
         // With delta time
         //private async Task SpinReelAsync(int reel, CancellationToken cancellationToken, TimeSpan rollingDelay)
         //{
