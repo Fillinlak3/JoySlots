@@ -18,6 +18,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="5*"/>
+            <RowDefinition Height=".25*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -40,7 +41,7 @@
             <Image Source="{StaticResource img_SpinButton}" Stretch="Uniform"/>
         </Button>
         
-        <Grid Grid.Row="2" Grid.Column="2" Background="Transparent" Margin="10">
+        <Grid Grid.Row="3" Grid.Column="2" Background="Transparent" Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -56,7 +57,7 @@
             </Viewbox>
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="0" Background="Transparent" Margin="10">
+        <Grid Grid.Row="3" Grid.Column="0" Background="Transparent" Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -73,7 +74,7 @@
         </Grid>
 
         <!-- Bottom-Side Panel -->
-        <Grid Grid.Row="2" Grid.Column="1" Margin="5">
+        <Grid Grid.Row="3" Grid.Column="1" Margin="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="*"/>
@@ -89,7 +90,7 @@
                 <StackPanel Orientation="Vertical">
                     <Label Content="    BALANȚĂ:   " Foreground="white" FontSize="16" FontWeight="SemiBold"
                            HorizontalAlignment="Right"/>
-                    <Label Content="1000.00" Foreground="white" FontSize="18" FontWeight="bold"
+                    <Label Content="1000.00" Foreground="white" FontSize="18" FontWeight="Bold"
                            HorizontalAlignment="Center" Margin="0, -15, 0, -15"/>
                     <Label Content="LEI" Foreground="white" FontSize="16" FontWeight="SemiBold"
                            HorizontalAlignment="Center"/>
@@ -100,7 +101,7 @@
                 <StackPanel Orientation="Vertical">
                     <Label Content="ULTIMUL CÂȘTIG:" Foreground="white" FontSize="16" FontWeight="SemiBold"
                            HorizontalAlignment="Left"/>
-                    <Label Content="1000.00" Foreground="white" FontSize="18" FontWeight="bold"
+                    <Label Content="1000.00" Foreground="white" FontSize="18" FontWeight="Bold"
                            HorizontalAlignment="Center" Margin="0, -10, 0, -10"/>
                     <Label Content="LEI" Foreground="white" FontSize="16" FontWeight="SemiBold"
                            HorizontalAlignment="Center"/>
@@ -125,8 +126,15 @@
             </Viewbox>
         </Grid>
 
+        <!-- Status Text -->
+        <Viewbox Grid.Row="2" Grid.Column="1">
+            <Label x:Name="Status_LB" Content=" FACEȚI CLICK PE ROTIRE PENTRU A JUCA " Foreground="White" FontSize="22"
+                   FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Black"
+                   Opacity=".8"/>
+        </Viewbox>
+            
         <!-- Reels -->
-        <Viewbox Stretch="Fill" StretchDirection="DownOnly" Grid.Row="1" Grid.Column="1">
+        <Viewbox Stretch="Fill" StretchDirection="DownOnly" Grid.Row="1" Grid.Column="1" Margin="5">
             <Grid x:Name="ReelsGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition/>

@@ -95,8 +95,11 @@ namespace JoySlots_WPF.View
                     return;
             }
             if (App.GameSettings.CanSpin == false) return;
+
+            // Currently spinning.
             App.GameSettings.BurningLinesAnimation = false;
             App.GameSettings.CanSpin = false;
+            Status_LB.Content = " MULT NOROC! ";
 
             // Remove all animations.
             if (ReelsGrid.Children.Count > 15)
@@ -104,8 +107,9 @@ namespace JoySlots_WPF.View
 
             Debug.WriteLine("[SPINNING]");
             await SpinReelsAsync();
+            Debug.WriteLine("[STOPPED SPINNING]");
             await CheckWin();
-            Debug.WriteLine("[STOP]");
+            Status_LB.Content = " FACEȚI CLICK PE ROTIRE PENTRU A JUCA ";
         }
 
         private async Task CheckWin()
@@ -119,6 +123,7 @@ namespace JoySlots_WPF.View
             if (WinningLines.Count > 0)
             {
                 Debug.WriteLine("<Animation BURNING Winning Lines>");
+                Status_LB.Content = string.Empty;
                 App.GameSettings.BurningLinesAnimation = true;
                 ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;
                 foreach (var line in WinningLines)
@@ -140,6 +145,7 @@ namespace JoySlots_WPF.View
                 CancellationTokenSources.Add(new CancellationTokenSource());
                 // Animation BURN each winning line using the animated outline.
                 await AnimateWinningLinesAsync(WinningLines, CancellationTokenSources.First().Token);
+                WinningLines.Clear();
             }
 
             // Removed cuz it's better to be placed in the spinning button.
@@ -162,6 +168,7 @@ namespace JoySlots_WPF.View
                     {
                         if (cancellationToken.IsCancellationRequested) break;
 
+                        Status_LB.Content = $" LINIA {line.Line}   CÂȘTIG {line.CashValue} LEI ";
                         if (Game.MapWinningLines.ContainsKey(line.Line))
                         {
                             for (int i = 0; i < line.SymbolsCount && !cancellationToken.IsCancellationRequested; i++, index++)
