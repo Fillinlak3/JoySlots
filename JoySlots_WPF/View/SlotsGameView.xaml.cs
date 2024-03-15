@@ -116,9 +116,6 @@ namespace JoySlots_WPF.View
 
             Debug.WriteLine("[SPINNING]");
             await SpinReelsAsync();
-            ReelsGrid.GetChild(2, 0)!.Source = Game.Symbols.FirstOrDefault(x => x.Name == "Robert")!.ImageSource;
-            ReelsGrid.GetChild(2, 1)!.Source = Game.Symbols.FirstOrDefault(x => x.Name == "Robert")!.ImageSource;
-            ReelsGrid.GetChild(1, 2)!.Source = Game.Symbols.FirstOrDefault(x => x.Name == "Robert")!.ImageSource;
             Debug.WriteLine("[STOPPED SPINNING]");
             await CheckWin();
             Status_LB.Content = " FACEȚI CLICK PE ROTIRE PENTRU A JUCA ";
