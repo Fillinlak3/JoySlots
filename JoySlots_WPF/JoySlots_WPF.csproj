@@ -9,11 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Anim\burning_outline_anim.gif" />
-    <None Remove="Resources\Anim\fire_burning.gif" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Command\" />
 	<Folder Include="Resources\Audio\" />
   </ItemGroup>

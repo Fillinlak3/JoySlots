@@ -90,18 +90,18 @@
                 <StackPanel Orientation="Vertical">
                     <Label Content="    BALANȚĂ:   " Foreground="white" FontSize="16" FontWeight="SemiBold"
                            HorizontalAlignment="Right"/>
-                    <Label Content="1000.00" Foreground="white" FontSize="18" FontWeight="Bold"
+                    <Label x:Name="BalanceCash_LB" Content="1000.00" Foreground="white" FontSize="18" FontWeight="Bold"
                            HorizontalAlignment="Center" Margin="0, -15, 0, -15"/>
                     <Label Content="LEI" Foreground="white" FontSize="16" FontWeight="SemiBold"
                            HorizontalAlignment="Center"/>
                 </StackPanel>
             </Viewbox>
             <!-- Last Win Text -->
-            <Viewbox Grid.Column="6">
+            <Viewbox x:Name="LastWin_VB" Grid.Column="6" Visibility="Collapsed">
                 <StackPanel Orientation="Vertical">
-                    <Label Content="ULTIMUL CÂȘTIG:" Foreground="white" FontSize="16" FontWeight="SemiBold"
-                           HorizontalAlignment="Left"/>
-                    <Label Content="1000.00" Foreground="white" FontSize="18" FontWeight="Bold"
+                    <Label x:Name="LastWin_LB" Content="ULTIMUL CÂȘTIG:" Foreground="white" FontSize="16"
+                           FontWeight="SemiBold" HorizontalAlignment="Left"/>
+                    <Label x:Name="LastWinCash_LB" Content="1000.00" Foreground="white" FontSize="18" FontWeight="Bold"
                            HorizontalAlignment="Center" Margin="0, -10, 0, -10"/>
                     <Label Content="LEI" Foreground="white" FontSize="16" FontWeight="SemiBold"
                            HorizontalAlignment="Center"/>

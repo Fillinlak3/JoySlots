@@ -1,6 +1,7 @@
 ﻿using JoySlots_WPF.Extensions;
 using JoySlots_WPF.Model;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -60,6 +61,8 @@ namespace JoySlots_WPF.View
                     ReelsGrid.GetChild(i, j)!.Source = Game.Symbols.Random("Iris", "Ali", "Jumi");
                 }
             }
+
+            BalanceCash_LB.Content = $"{App.Player.Balance:F2}";
             App.GameSettings.CanSpin = true;
             App.Logger.LogInfo("SlotsGameView/LoadView", "Loaded reels by default.");
         }
@@ -100,6 +103,12 @@ namespace JoySlots_WPF.View
             App.GameSettings.BurningLinesAnimation = false;
             App.GameSettings.CanSpin = false;
             Status_LB.Content = " MULT NOROC! ";
+            if (LastWin_VB.Visibility == Visibility.Visible)
+                LastWin_LB.Content = "ULTIMUL CÂȘTIG:";
+
+            // Paid the bet for spinning.
+            App.Player.Balance -= App.GameSettings.BetValue;
+            BalanceCash_LB.Content = $"{App.Player.Balance:F2}";
 
             // Remove all animations.
             if (ReelsGrid.Children.Count > 15)
@@ -107,6 +116,9 @@ namespace JoySlots_WPF.View
 
             Debug.WriteLine("[SPINNING]");
             await SpinReelsAsync();
+            ReelsGrid.GetChild(2, 0)!.Source = Game.Symbols.FirstOrDefault(x => x.Name == "Robert")!.ImageSource;
+            ReelsGrid.GetChild(2, 1)!.Source = Game.Symbols.FirstOrDefault(x => x.Name == "Robert")!.ImageSource;
+            ReelsGrid.GetChild(1, 2)!.Source = Game.Symbols.FirstOrDefault(x => x.Name == "Robert")!.ImageSource;
             Debug.WriteLine("[STOPPED SPINNING]");
             await CheckWin();
             Status_LB.Content = " FACEȚI CLICK PE ROTIRE PENTRU A JUCA ";
@@ -126,6 +138,7 @@ namespace JoySlots_WPF.View
                 Status_LB.Content = string.Empty;
                 App.GameSettings.BurningLinesAnimation = true;
                 ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;
+                double currentWin = 0;
                 foreach (var line in WinningLines)
                 {
                     if (Game.MapWinningLines.ContainsKey(line.Line))
@@ -133,6 +146,15 @@ namespace JoySlots_WPF.View
                         for (int i = 0; i < line.SymbolsCount; i++)
                         {
                             SymbolLocation symbolLocation = Game.MapWinningLines[line.Line][i];
+
+                            /*
+                                BUG SOLVE:
+                                Without this, if an animation was already placed on the same cell, it would place another
+                                on top of it, so this prevents multiple images of animations on the same grid cell.
+                             */
+                            if (ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 1)! != null)
+                                continue;
+
                             ReelsGrid.SetChild(symbolLocation.row, symbolLocation.column, new Image(), true);
                             int index = ReelsGrid.Children.Count - 1;
                             Image animImage = (ReelsGrid.Children[index] as Image)!;
@@ -140,11 +162,17 @@ namespace JoySlots_WPF.View
                             ImageBehavior.SetAnimatedSource(animImage, burningLinesAnim);
                         }
                     }
+                    currentWin += line.CashValue;
                 }
+                LastWin_LB.Content = "   CÂȘTIG:  ";
+                LastWinCash_LB.Content = $"{currentWin:F2}";
+                LastWin_VB.Visibility = Visibility.Visible;
 
                 CancellationTokenSources.Add(new CancellationTokenSource());
                 // Animation BURN each winning line using the animated outline.
                 await AnimateWinningLinesAsync(WinningLines, CancellationTokenSources.First().Token);
+
+                App.Player.Balance += currentWin;
                 WinningLines.Clear();
             }
 
@@ -155,6 +183,7 @@ namespace JoySlots_WPF.View
         }
 
         #region Animations
+
         private async Task AnimateWinningLinesAsync(List<WinningLine> WinningLines, CancellationToken cancellationToken)
         {
             ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;

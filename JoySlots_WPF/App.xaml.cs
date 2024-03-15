@@ -13,6 +13,9 @@ namespace JoySlots_WPF
         private static GameSettings _gameSettings { get; set; }
         public static GameSettings GameSettings { get => _gameSettings;}
 
+        private static Player _currentPlayer { get; set; }
+        public static Player Player { get => _currentPlayer; }
+
         private static Logger _logger { get; set; }
         public static Logger Logger { get => _logger; }
 
@@ -28,6 +31,7 @@ namespace JoySlots_WPF
             #endif
 
             _gameSettings = new GameSettings();
+            _currentPlayer = new Player();
         }
 
         protected override void OnStartup(StartupEventArgs e)
