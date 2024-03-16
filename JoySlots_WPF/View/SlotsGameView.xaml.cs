@@ -1,8 +1,9 @@
-﻿using JoySlots_WPF.Extensions;
+﻿//#define WAIT_MONEY_GROWING_ANIM
+#define BYPASS_MONEY_GROWING_ANIM
+
+using JoySlots_WPF.Extensions;
 using JoySlots_WPF.Model;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -77,8 +78,52 @@ namespace JoySlots_WPF.View
 
         public async void SpinButton_Click(object sender, RoutedEventArgs e)
         {
+#if WAIT_MONEY_GROWING_ANIM
+            if (CancellationTokenSources.Count > 0 && CancellationTokenSources.Count <= 2 &&
+                App.GameSettings.BurningLinesAnimation)
+            {
+                /*
+                    The animations that can be are:
+                    1. Money Growing for Winning. [1]
+                    2. Burning Winning Lines. [0]
+                    3. Money Growing for CashIn. [1]
+
+                    <I>: If there are any money growing animations, it will need to stop them if space pressed. Then wait
+                         for a second press of the spin btn to roll the reels.
+                         Otherwise,stop the Burning Winning Lines Anim and forcefully spin the reels.
+                 */
+                if(App.GameSettings.MoneyGrowingAnimation)
+                {
+                    // Send the signal to cancel any Money Growing Animation.
+                    CancellationTokenSources[1].Cancel();
+                    return;
+                }
+                // If only the Burning Winning Lines Anim is active.
+                else
+                {
+                    foreach (var cts in CancellationTokenSources)
+                    {
+                        cts.Cancel();
+                    }
+                    CancellationTokenSources.Clear();
+                    await Task.Delay(200);
+                }
+            }
+            else if (CancellationTokenSources.Count > 0 &&
+                CancellationTokenSources.Any(t => t.IsCancellationRequested == false))
+            {
+                await Task.Delay(50);
+                foreach (var tokenSource in CancellationTokenSources)
+                    tokenSource.Cancel();
+                CancellationTokenSources.Clear();
+
+                // Delay when spamming the button with this.
+                await Task.Delay(200);
+                return;
+            }
+#elif BYPASS_MONEY_GROWING_ANIM
             if (CancellationTokenSources.Count > 0 &&
-            CancellationTokenSources.Any(t => t.IsCancellationRequested == false))
+                CancellationTokenSources.Any(t => t.IsCancellationRequested == false))
             {
                 await Task.Delay(50);
                 foreach (var tokenSource in CancellationTokenSources)
@@ -88,18 +133,15 @@ namespace JoySlots_WPF.View
                 // Delay when spamming the button with this.
                 await Task.Delay(200);
 
-                /*
-                    -> When spinning reels and force stop, this is used to press again the spin to spin the reels.
-                    -> But when it's animating the winning lines, when pressed again to spin, it will automatically start
-                    spinning the reels.
-                (it's animating the winning lines when it's just 1 cancellation token)
-                 */
+                Debug.WriteLine(App.GameSettings.BurningLinesAnimation);
                 if(App.GameSettings.BurningLinesAnimation == false)
                     return;
             }
+#endif
             if (App.GameSettings.CanSpin == false) return;
 
             // Currently spinning.
+            CancellationTokenSources.Clear();
             App.GameSettings.BurningLinesAnimation = false;
             App.GameSettings.CanSpin = false;
             Status_LB.Content = " MULT NOROC! ";
@@ -133,7 +175,6 @@ namespace JoySlots_WPF.View
             {
                 Debug.WriteLine("<Animation BURNING Winning Lines>");
                 Status_LB.Content = string.Empty;
-                App.GameSettings.BurningLinesAnimation = true;
                 ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;
                 double currentWin = 0;
                 foreach (var line in WinningLines)
@@ -162,12 +203,17 @@ namespace JoySlots_WPF.View
                     currentWin += line.CashValue;
                 }
                 LastWin_LB.Content = "   CÂȘTIG:  ";
-                LastWinCash_LB.Content = $"{currentWin:F2}";
+                LastWinCash_LB.Content = "0.00";
                 LastWin_VB.Visibility = Visibility.Visible;
 
                 CancellationTokenSources.Add(new CancellationTokenSource());
+                CancellationTokenSources.Add(new CancellationTokenSource());
                 // Animation BURN each winning line using the animated outline.
-                await AnimateWinningLinesAsync(WinningLines, CancellationTokenSources.First().Token);
+                
+                Task animateMoneyGrowing = new Task(async () =>
+                await AnimateMoneyGrowingToLastWinAsync(currentWin, LastWinCash_LB, CancellationTokenSources[1].Token));
+                animateMoneyGrowing.RunSynchronously();
+                await AnimateWinningLinesAsync(WinningLines, CancellationTokenSources[0].Token);
 
                 App.Player.Balance += currentWin;
                 WinningLines.Clear();
@@ -180,9 +226,70 @@ namespace JoySlots_WPF.View
         }
 
         #region Animations
+        private async Task AnimateMoneyGrowingToBalanceAsync(Label From, Label Where, CancellationToken cancellationToken)
+        {
+            /*
+                Trebuie sa IA banii de la From
+                Trebuie sa PUNA banii la Where
+                Cat timp ruleaza task ul animatiei
+             */
+            double startAmount = 0.1;
+            double endAmount = Convert.ToDouble(From.Content);
+            int numIncrements = 100; // Number of increments in the animation
+
+            // Calculate the increment value based on total_winning.
+            double incrementValue = (endAmount - startAmount) / numIncrements;
+
+            double sum = 0;
+            for (int i = 0; i <= numIncrements && !cancellationToken.IsCancellationRequested; i++)
+            {
+                sum = startAmount + i * incrementValue;
+                From.Content = $"{Convert.ToDouble(From.Content) - sum:F2}";
+                Where.Content = $"{Convert.ToDouble(Where.Content) + sum:F2}";
+                if (sum >= Convert.ToDouble(From.Content) - 0.001)
+                    break;
+                await Task.Delay(30);
+            }
+        }
+
+        private async Task AnimateMoneyGrowingToLastWinAsync(double From, Label Where, CancellationToken cancellationToken)
+        {
+            App.GameSettings.MoneyGrowingAnimation = true;
+
+            /*
+                Trebuie sa IA banii de la From
+                Trebuie sa PUNA banii la Where
+                Cat timp ruleaza task ul animatiei
+             */
+            double startAmount = 0.1;
+            double endAmount = From;
+            int numIncrements = 100; // Number of increments in the animation
+
+            // Calculate the increment value based on total_winning.
+            double incrementValue = (endAmount - startAmount) / numIncrements;
+
+            double sum = 0;
+            try
+            {
+
+                for (int i = 0; i <= numIncrements && !cancellationToken.IsCancellationRequested; i++)
+                {
+                    sum = startAmount + i * incrementValue;
+                    Where.Content = $"{sum:F2}";
+                    if (sum >= endAmount - 0.001)
+                        break;
+                    await Task.Delay(20, cancellationToken);
+                }
+            }
+            catch(Exception) { }
+
+            Where.Content = $"{endAmount:F2}";
+            App.GameSettings.MoneyGrowingAnimation = false;
+        }
 
         private async Task AnimateWinningLinesAsync(List<WinningLine> WinningLines, CancellationToken cancellationToken)
         {
+            App.GameSettings.BurningLinesAnimation = true;
             ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;
             ImageSource burningLinesOutlinedAnim = (this.FindResource("anim_BurningLinesOutlined") as BitmapImage)!;
             try
