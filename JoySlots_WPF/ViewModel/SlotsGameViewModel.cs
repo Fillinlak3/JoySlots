@@ -2,7 +2,6 @@
 using System.Windows.Controls;
 using JoySlots_WPF.Extensions;
 using System.Windows.Media;
-using System.Diagnostics;
 
 namespace JoySlots_WPF.ViewModel
 {
@@ -57,7 +56,6 @@ namespace JoySlots_WPF.ViewModel
             {
                 WinningLines.Add(new WinningLine(stars,
                     Symbols.FirstOrDefault(x => x.Name == "Jumi")!, 0, ScatterStarsLocation));
-                Debug.WriteLine("STARSS");
             }
             ScatterStarsLocation.Clear();
 
@@ -80,7 +78,6 @@ namespace JoySlots_WPF.ViewModel
             {
                 WinningLines.Add(new WinningLine(dollars,
                     Symbols.FirstOrDefault(x => x.Name == "Ali")!, 0, ScatterDollarsLocation));
-                Debug.WriteLine("DOLARSS");
             }
             ScatterDollarsLocation.Clear();
 

@@ -3,7 +3,6 @@
 
 using JoySlots_WPF.Extensions;
 using JoySlots_WPF.Model;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -125,15 +124,16 @@ namespace JoySlots_WPF.View
             if (CancellationTokenSources.Count > 0 &&
                 CancellationTokenSources.Any(t => t.IsCancellationRequested == false))
             {
+                App.Logger.LogInfo("SlotsGameView/SpinButton_Click", "Forcefully stopping all animations.");
                 await Task.Delay(50);
                 foreach (var tokenSource in CancellationTokenSources)
                     tokenSource.Cancel();
                 CancellationTokenSources.Clear();
 
+                App.Logger.Log("SlotsGameView/SpinButton_Click", "All animations were stopped.");
                 // Delay when spamming the button with this.
                 await Task.Delay(200);
 
-                Debug.WriteLine(App.GameSettings.BurningLinesAnimation);
                 if(App.GameSettings.BurningLinesAnimation == false)
                     return;
             }
@@ -156,24 +156,23 @@ namespace JoySlots_WPF.View
             if (ReelsGrid.Children.Count > 15)
                 ReelsGrid.Children.RemoveRange(15, ReelsGrid.Children.Count);
 
-            Debug.WriteLine("[SPINNING]");
+            App.Logger.LogInfo("SlotsGameView/SpinButton", "Reels currently spinning.");
             await SpinReelsAsync();
-            Debug.WriteLine("[STOPPED SPINNING]");
+            App.Logger.Log("SlotsGameView/SpinButton", "Stopped spinning reels.");
             await CheckWin();
             Status_LB.Content = " FACEȚI CLICK PE ROTIRE PENTRU A JUCA ";
         }
 
         private async Task CheckWin()
         {
-            Debug.WriteLine("<CHECKING Game WIN>");
+            App.Logger.Log("SlotsGameView/CheckWin", "Check winning lines.");
             List<WinningLine> WinningLines = await Game.CheckWinningLines(ReelsGrid);
-            Debug.WriteLine("<ENDED checking>");
             await Task.Delay(100);
 
             // Antimation BURNING the winning lines.
             if (WinningLines.Count > 0)
             {
-                Debug.WriteLine("<Animation BURNING Winning Lines>");
+                App.Logger.Log("SlotsGameView/CheckWin", "Preparing the animations.");
                 Status_LB.Content = string.Empty;
                 ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;
                 double currentWin = 0;
@@ -190,7 +189,7 @@ namespace JoySlots_WPF.View
                                 Without this, if an animation was already placed on the same cell, it would place another
                                 on top of it, so this prevents multiple images of animations on the same grid cell.
                              */
-                            if (ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 1)! != null)
+                            if (ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 1) is not null)
                                 continue;
 
                             ReelsGrid.SetChild(symbolLocation.row, symbolLocation.column, new Image(), true);
@@ -209,7 +208,7 @@ namespace JoySlots_WPF.View
                 CancellationTokenSources.Add(new CancellationTokenSource());
                 CancellationTokenSources.Add(new CancellationTokenSource());
                 // Animation BURN each winning line using the animated outline.
-                
+                App.Logger.Log("SlotsGameView/CheckWin", "Launching Money Growing Last Win & Winning Lines animations.");
                 Task animateMoneyGrowing = new Task(async () =>
                 await AnimateMoneyGrowingToLastWinAsync(currentWin, LastWinCash_LB, CancellationTokenSources[1].Token));
                 animateMoneyGrowing.RunSynchronously();
@@ -222,7 +221,7 @@ namespace JoySlots_WPF.View
             // Removed cuz it's better to be placed in the spinning button.
             // Task.Delay(200);
             App.GameSettings.CanSpin = true;
-            App.Logger.LogInfo("SlotsGameView/CheckWin", "Game Win succeeded. CanSpin = True");
+            App.Logger.Log("SlotsGameView/CheckWin", "Game Win succeeded. CanSpin = True");
         }
 
         #region Animations
@@ -254,6 +253,7 @@ namespace JoySlots_WPF.View
 
         private async Task AnimateMoneyGrowingToLastWinAsync(double From, Label Where, CancellationToken cancellationToken)
         {
+            App.Logger.Log("SlotsGameView/AnimateMoneyGrowingToLastWinAsync", "Animation running.");
             App.GameSettings.MoneyGrowingAnimation = true;
 
             /*
@@ -267,14 +267,12 @@ namespace JoySlots_WPF.View
 
             // Calculate the increment value based on total_winning.
             double incrementValue = (endAmount - startAmount) / numIncrements;
-
-            double sum = 0;
             try
             {
 
                 for (int i = 0; i <= numIncrements && !cancellationToken.IsCancellationRequested; i++)
                 {
-                    sum = startAmount + i * incrementValue;
+                    double sum = startAmount + i * incrementValue;
                     Where.Content = $"{sum:F2}";
                     if (sum >= endAmount - 0.001)
                         break;
@@ -285,10 +283,12 @@ namespace JoySlots_WPF.View
 
             Where.Content = $"{endAmount:F2}";
             App.GameSettings.MoneyGrowingAnimation = false;
+            App.Logger.Log("SlotsGameView/AnimateMoneyGrowingToLastWinAsync", "Animation stopped.");
         }
 
         private async Task AnimateWinningLinesAsync(List<WinningLine> WinningLines, CancellationToken cancellationToken)
         {
+            App.Logger.Log("SlotsGameView/AnimateWinningLinesAsync", "Animation running.");
             App.GameSettings.BurningLinesAnimation = true;
             ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;
             ImageSource burningLinesOutlinedAnim = (this.FindResource("anim_BurningLinesOutlined") as BitmapImage)!;
@@ -296,7 +296,6 @@ namespace JoySlots_WPF.View
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    int index = 15;
                     foreach (var line in WinningLines)
                     {
                         if (cancellationToken.IsCancellationRequested) break;
@@ -304,20 +303,19 @@ namespace JoySlots_WPF.View
                         Status_LB.Content = $" LINIA {line.Line}   CÂȘTIG {line.CashValue} LEI ";
                         if (Game.MapWinningLines.ContainsKey(line.Line))
                         {
-                            for (int i = 0; i < line.SymbolsCount && !cancellationToken.IsCancellationRequested; i++, index++)
+                            for (int i = 0; i < line.SymbolsCount && !cancellationToken.IsCancellationRequested; i++)
                             {
                                 SymbolLocation symbolLocation = Game.MapWinningLines[line.Line][i];
-                                Image animImage = (ReelsGrid.Children[index] as Image)!;
+                                Image animImage = ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 1)!;
                                 ImageBehavior.SetAnimatedSource(animImage, burningLinesOutlinedAnim);
                             }
 
                             await Task.Delay(2500, cancellationToken);
-                            index -= line.SymbolsCount;
 
-                            for (int i = 0; i < line.SymbolsCount && !cancellationToken.IsCancellationRequested; i++, index++)
+                            for (int i = 0; i < line.SymbolsCount && !cancellationToken.IsCancellationRequested; i++)
                             {
                                 SymbolLocation symbolLocation = Game.MapWinningLines[line.Line][i];
-                                Image animImage = (ReelsGrid.Children[index] as Image)!;
+                                Image animImage = ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 1)!;
                                 ImageBehavior.SetAnimatedSource(animImage, burningLinesAnim);
                             }
                         }
@@ -325,6 +323,7 @@ namespace JoySlots_WPF.View
                 }
             }
             catch(Exception) { }
+            App.Logger.Log("SlotsGameView/AnimateWinningLinesAsync", "Animation stopped.");
         }
 
         private async Task SpinReelsAsync()

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
@@ -17,7 +16,6 @@ namespace JoySlots_WPF.Services
 
             GetMonitorRefreshRate();
             FrameDuration = 1000 / MonitorRefreshRate;
-            Debug.WriteLine(FrameDuration);
         }
 
         private bool GetMonitorRefreshRate()
