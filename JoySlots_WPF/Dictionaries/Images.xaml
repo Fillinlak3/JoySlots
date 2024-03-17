@@ -6,6 +6,7 @@
     <BitmapImage x:Key="img_SpinButton" UriSource="/Resources/Images/misc/Spin_Button.png"/>
     <BitmapImage x:Key="img_MenuButton" UriSource="/Resources/Images/misc/Menu_Button.png"/>
     <BitmapImage x:Key="img_VolumeMax" UriSource="/Resources/Images/misc/Volume_Sound.png"/>
+    <BitmapImage x:Key="img_CashInButton" UriSource="/Resources/Images/misc/Cash_In.png"/>
 
     <!-- anim -->
     <BitmapImage x:Key="anim_BurningLinesOutlined" UriSource="/Resources/Anim/burning_outline_anim.gif"/>

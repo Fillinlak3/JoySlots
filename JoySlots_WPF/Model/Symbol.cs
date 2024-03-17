@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Diagnostics;
+using System.Windows.Media;
 
 namespace JoySlots_WPF.Model
 {
@@ -86,13 +87,13 @@ namespace JoySlots_WPF.Model
             switch (symbolsCount)
             {
                 case 2:
-                    return Math.Round(ValueFor_2_Multiplier * App.GameSettings.BetValue);
+                    return Math.Round(ValueFor_2_Multiplier * App.GameSettings.BetValue, 2);
                 case 3:
-                    return Math.Round(ValueFor_3_Multiplier * App.GameSettings.BetValue);
+                    return Math.Round(ValueFor_3_Multiplier * App.GameSettings.BetValue, 2);
                 case 4:
-                    return Math.Round(ValueFor_4_Multiplier * App.GameSettings.BetValue);
+                    return Math.Round(ValueFor_4_Multiplier * App.GameSettings.BetValue, 2);
                 case 5:
-                    return Math.Round(ValueFor_5_Multiplier * App.GameSettings.BetValue);
+                    return Math.Round(ValueFor_5_Multiplier * App.GameSettings.BetValue, 2);
                 default:
                     return 0;
             }
