@@ -16,7 +16,8 @@ namespace JoySlots_WPF.Model
         public readonly string Name;
         public readonly ImageSource ImageSource;
         public readonly RarityTag Rarity;
-        private double ValueFor_2 = 0f, ValueFor_3 = 0f, ValueFor_4 = 0f, ValueFor_5 = 0f;
+        private readonly double ValueFor_2_Multiplier = 0f, ValueFor_3_Multiplier = 0f;
+        private readonly double ValueFor_4_Multiplier = 0f, ValueFor_5_Multiplier = 0f;
 
         public Symbol(string name, ImageSource imageSource, RarityTag rarity)
         {
@@ -27,53 +28,53 @@ namespace JoySlots_WPF.Model
             switch(name)
             {
                 case "Robert":
-                    ValueFor_2 = Math.Round(App.GameSettings.BetValue, 2);
-                    ValueFor_3 = Math.Round(App.GameSettings.BetValue * 5, 2);
-                    ValueFor_4 = Math.Round(App.GameSettings.BetValue * 25, 2);
-                    ValueFor_5 = Math.Round(App.GameSettings.BetValue * 500, 2);
+                    ValueFor_2_Multiplier = 1;
+                    ValueFor_3_Multiplier = 5;
+                    ValueFor_4_Multiplier = 25;
+                    ValueFor_5_Multiplier = 500;
                     break;
                 case "Bucurie":
-                    ValueFor_3 = Math.Round(App.GameSettings.BetValue * 4, 2);
-                    ValueFor_4 = Math.Round(App.GameSettings.BetValue * 12, 2);
-                    ValueFor_5 = Math.Round(App.GameSettings.BetValue * 70, 2);
+                    ValueFor_3_Multiplier = 4;
+                    ValueFor_4_Multiplier = 12;
+                    ValueFor_5_Multiplier = 70;
                     break;
                 case "Teo":
-                    ValueFor_3 = Math.Round(App.GameSettings.BetValue * 4, 2);
-                    ValueFor_4 = Math.Round(App.GameSettings.BetValue * 12, 2);
-                    ValueFor_5 = Math.Round(App.GameSettings.BetValue * 70, 2);
+                    ValueFor_3_Multiplier = 4;
+                    ValueFor_4_Multiplier = 12;
+                    ValueFor_5_Multiplier = 70;
                     break;
                 case "Rizea":
-                    ValueFor_3 = Math.Round(App.GameSettings.BetValue * 2, 2);
-                    ValueFor_4 = Math.Round(App.GameSettings.BetValue * 4, 2);
-                    ValueFor_5 = Math.Round(App.GameSettings.BetValue * 20, 2);
+                    ValueFor_3_Multiplier = 2;
+                    ValueFor_4_Multiplier = 4;
+                    ValueFor_5_Multiplier = 20;
                     break;
                 case "Rusu":
-                    ValueFor_3 = Math.Round(App.GameSettings.BetValue * 1, 2);
-                    ValueFor_4 = Math.Round(App.GameSettings.BetValue * 3, 2);
-                    ValueFor_5 = Math.Round(App.GameSettings.BetValue * 15, 2);
+                    ValueFor_3_Multiplier = 1;
+                    ValueFor_4_Multiplier = 3;
+                    ValueFor_5_Multiplier = 15;
                     break;
                 case "Catanoiu":
-                    ValueFor_3 = Math.Round(App.GameSettings.BetValue * 1, 2);
-                    ValueFor_4 = Math.Round(App.GameSettings.BetValue * 3, 2);
-                    ValueFor_5 = Math.Round(App.GameSettings.BetValue * 15, 2);
+                    ValueFor_3_Multiplier = 1;
+                    ValueFor_4_Multiplier = 3;
+                    ValueFor_5_Multiplier = 15;
                     break;
                 case "Gabi":
-                    ValueFor_3 = Math.Round(App.GameSettings.BetValue * 1, 2);
-                    ValueFor_4 = Math.Round(App.GameSettings.BetValue * 3, 2);
-                    ValueFor_5 = Math.Round(App.GameSettings.BetValue * 15, 2);
+                    ValueFor_3_Multiplier = 1;
+                    ValueFor_4_Multiplier = 3;
+                    ValueFor_5_Multiplier = 15;
                     break;
                 case "Petru":
-                    ValueFor_3 = Math.Round(App.GameSettings.BetValue * 1, 2);
-                    ValueFor_4 = Math.Round(App.GameSettings.BetValue * 3, 2);
-                    ValueFor_5 = Math.Round(App.GameSettings.BetValue * 15, 2);
+                    ValueFor_3_Multiplier = 1;
+                    ValueFor_4_Multiplier = 3;
+                    ValueFor_5_Multiplier = 15;
                     break;
                 case "Jumi":
-                    ValueFor_3 = Math.Round(App.GameSettings.BetValue * 20, 2);
+                    ValueFor_3_Multiplier = 20;
                     break;
                 case "Ali":
-                    ValueFor_3 = Math.Round(App.GameSettings.BetValue * 5, 2);
-                    ValueFor_4 = Math.Round(App.GameSettings.BetValue * 20, 2);
-                    ValueFor_5 = Math.Round(App.GameSettings.BetValue * 100, 2);
+                    ValueFor_3_Multiplier = 5;
+                    ValueFor_4_Multiplier = 20;
+                    ValueFor_5_Multiplier = 100;
                     break;
                 default:
                     break;
@@ -85,13 +86,13 @@ namespace JoySlots_WPF.Model
             switch (symbolsCount)
             {
                 case 2:
-                    return ValueFor_2;
+                    return Math.Round(ValueFor_2_Multiplier * App.GameSettings.BetValue);
                 case 3:
-                    return ValueFor_3;
+                    return Math.Round(ValueFor_3_Multiplier * App.GameSettings.BetValue);
                 case 4:
-                    return ValueFor_4;
+                    return Math.Round(ValueFor_4_Multiplier * App.GameSettings.BetValue);
                 case 5:
-                    return ValueFor_5;
+                    return Math.Round(ValueFor_5_Multiplier * App.GameSettings.BetValue);
                 default:
                     return 0;
             }

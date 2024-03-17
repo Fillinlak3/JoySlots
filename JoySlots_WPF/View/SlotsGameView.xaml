@@ -90,7 +90,7 @@
                 <StackPanel Orientation="Vertical">
                     <Label Content="    BALANȚĂ:   " Foreground="white" FontSize="16" FontWeight="SemiBold"
                            HorizontalAlignment="Right"/>
-                    <Label x:Name="BalanceCash_LB" Content="1000.00" Foreground="white" FontSize="18" FontWeight="Bold"
+                    <Label x:Name="BalanceCash_LB" Content="XXXX.xx" Foreground="white" FontSize="18" FontWeight="Bold"
                            HorizontalAlignment="Center" Margin="0, -15, 0, -15"/>
                     <Label Content="LEI" Foreground="white" FontSize="16" FontWeight="SemiBold"
                            HorizontalAlignment="Center"/>
@@ -101,7 +101,7 @@
                 <StackPanel Orientation="Vertical">
                     <Label x:Name="LastWin_LB" Content="ULTIMUL CÂȘTIG:" Foreground="white" FontSize="16"
                            FontWeight="SemiBold" HorizontalAlignment="Left"/>
-                    <Label x:Name="LastWinCash_LB" Content="1000.00" Foreground="white" FontSize="18" FontWeight="Bold"
+                    <Label x:Name="LastWinCash_LB" Content="XXXX.xx" Foreground="white" FontSize="18" FontWeight="Bold"
                            HorizontalAlignment="Center" Margin="0, -10, 0, -10"/>
                     <Label Content="LEI" Foreground="white" FontSize="16" FontWeight="SemiBold"
                            HorizontalAlignment="Center"/>
@@ -110,19 +110,20 @@
 
             <!-- Bet Buttons -->
             <Viewbox Grid.Column="1">
-                <userControls:BetButton/>
+                <userControls:BetButton x:Name="BetButton_1" BetAmount="0.20" Click="SelectBetAmount"
+                                        BackgroundColor="Green"/>
             </Viewbox>
             <Viewbox Grid.Column="2">
-                <userControls:BetButton/>
+                <userControls:BetButton x:Name="BetButton_2" BetAmount="0.50" Click="SelectBetAmount"/>
             </Viewbox>
             <Viewbox Grid.Column="3">
-                <userControls:BetButton/>
+                <userControls:BetButton x:Name="BetButton_3" BetAmount="1.00" Click="SelectBetAmount"/>
             </Viewbox>
             <Viewbox Grid.Column="4">
-                <userControls:BetButton/>
+                <userControls:BetButton x:Name="BetButton_4" BetAmount="3.00" Click="SelectBetAmount"/>
             </Viewbox>
             <Viewbox Grid.Column="5">
-                <userControls:BetButton/>
+                <userControls:BetButton x:Name="BetButton_5" BetAmount="5.00" Click="SelectBetAmount"/>
             </Viewbox>
         </Grid>
 

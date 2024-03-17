@@ -3,6 +3,8 @@
 
 using JoySlots_WPF.Extensions;
 using JoySlots_WPF.Model;
+using JoySlots_WPF.View.custom_controls;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -47,7 +49,7 @@ namespace JoySlots_WPF.View
                         "Robert" => Symbol.RarityTag.VeryRare,
                         "Bucurie" => Symbol.RarityTag.Rare,
                         "Teo" => Symbol.RarityTag.Rare,
-                        _ => Symbol.RarityTag.Common,
+                        _ => Symbol.RarityTag.Common
                     };
                     Game.Symbols.Add(new Symbol(keyname, bitmapImage, rarity));
                 }
@@ -74,6 +76,37 @@ namespace JoySlots_WPF.View
             Game.Symbols.Clear();
         }
         #endregion
+
+        private void SelectBetAmount(object sender, RoutedEventArgs e)
+        {
+            /*
+                If the Bet Button is used as Spin Button to stop the animations and spin the reels.
+             */
+            if (App.GameSettings.CanSpin == false && App.GameSettings.BurningLinesAnimation == false)
+            { SpinButton_Click(sender, e); return; }
+
+            if (sender is not BetButton button || button is null)
+                throw new ArgumentException("Invalid bet button tried to be accessed.");
+
+            App.GameSettings.SetBetValue(button.Name switch
+            {
+                "BetButton_1" => Math.Round(App.GameSettings.CreditValue * 20, 2),
+                "BetButton_2" => Math.Round(App.GameSettings.CreditValue * 50, 2),
+                "BetButton_3" => Math.Round(App.GameSettings.CreditValue * 100, 2),
+                "BetButton_4" => Math.Round(App.GameSettings.CreditValue * 300, 2),
+                "BetButton_5" => Math.Round(App.GameSettings.CreditValue * 500, 2),
+                _ => throw new Exception("Couldn't set bet value.")
+            });
+
+            BetButton_1.ClearBackgroundColor();
+            BetButton_2.ClearBackgroundColor();
+            BetButton_3.ClearBackgroundColor();
+            BetButton_4.ClearBackgroundColor();
+            BetButton_5.ClearBackgroundColor();
+            button.BackgroundColor = new SolidColorBrush(Colors.Green);
+
+            SpinButton_Click(sender, e);
+        }
 
         public async void SpinButton_Click(object sender, RoutedEventArgs e)
         {
@@ -131,9 +164,17 @@ namespace JoySlots_WPF.View
                 CancellationTokenSources.Clear();
 
                 App.Logger.Log("SlotsGameView/SpinButton_Click", "All animations were stopped.");
-                // Delay when spamming the button with this.
+                /*
+                    <!> Delay when spamming the button with this.
+                    <!> Informative: When it's an animation this also waits for the CheckWin to terminate.
+                    And by terminate means that CanSpin = true. So dont move.
+                 */
                 await Task.Delay(200);
 
+                /*
+                    This forces the reels to spin and bypass Money Growing & Winning Lines animations.
+                    This asks for a second press only when you stop the reels spinning animation.
+                 */
                 if(App.GameSettings.BurningLinesAnimation == false)
                     return;
             }
@@ -396,7 +437,7 @@ namespace JoySlots_WPF.View
                 await Task.Delay(rollingDelay);
             }
         }
-        
+
         // With delta time
         //private async Task SpinReelAsync(int reel, CancellationToken cancellationToken, TimeSpan rollingDelay)
         //{
