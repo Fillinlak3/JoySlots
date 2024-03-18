@@ -2,14 +2,15 @@
 {
     public class GameSettings
     {
-        public double WildSymbolChance { get; private set; } = 0.03f;
-        public double ScatterSymbolChance { get; private set; } = 0.02f;
-        public double VeryRareSymbolChance { get; private set; } = 0.10f;
-        public double RareSymbolChance { get; private set; } = 0.35f;
-        public double CommonSymbolChance { get; private set; } = 0.50f;
+        public double WildSymbolChance { get; } = 0.03f;
+        public double ScatterSymbolChance { get; } = 0.02f;
+        public double VeryRareSymbolChance { get; } = 0.10f;
+        public double RareSymbolChance { get; } = 0.35f;
+        public double CommonSymbolChance { get; } = 0.50f;
 
-        public uint ReelsSpinningSpeed { get; set; } = 1;
-        public uint ReelsStoppingSpeed { get; set; } = 10;
+        public double ReelsSpinningSpeed { get; } = 1; // 2.5
+        public double ReelsStoppingSpeed { get; } = 18; // 10 def
+        public double MotionBlurIntensity { get; } = 3;
 
         public double CreditValue { get; private set; } = 0.01f;
         public double BetValue { get; private set; } = 0.20f;

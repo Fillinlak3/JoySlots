@@ -7,6 +7,7 @@ using JoySlots_WPF.View.custom_controls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using WpfAnimatedGif;
 
@@ -427,7 +428,7 @@ namespace JoySlots_WPF.View
             // Stop animation.
             try
             {
-                await Task.Delay(delay, CancellationTokenSources[0].Token);
+                await Task.Delay(delayOffset, CancellationTokenSources[0].Token);
                 for (int i = 0; i < 5 && CancellationTokenSources.Count > 0; i++)
                 {
                     await Task.Delay(delayOffset);
@@ -452,6 +453,10 @@ namespace JoySlots_WPF.View
             ImageSource Wild = Game.Symbols.FirstOrDefault(x => x.Name == "Iris")!.ImageSource;
             ImageSource ScatterStar = Game.Symbols.FirstOrDefault(x => x.Name == "Jumi")!.ImageSource;
             ImageSource ScatterDollar = Game.Symbols.FirstOrDefault(x => x.Name == "Ali")!.ImageSource;
+
+            for (int i = 0; i < 3; i++)
+                ReelsGrid.GetChild(i, reel)!.Effect = new BlurEffect { Radius = App.GameSettings.MotionBlurIntensity,
+                KernelType = KernelType.Gaussian, RenderingBias = RenderingBias.Performance };
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -482,6 +487,9 @@ namespace JoySlots_WPF.View
 
                 await Task.Delay(rollingDelay);
             }
+
+            for (int i = 0; i < 3; i++)
+                ReelsGrid.GetChild(i, reel)!.Effect = null;
         }
 
         // With delta time
