@@ -25,7 +25,6 @@ namespace JoySlots_WPF.ViewModel
                 { 9, new List<SymbolLocation> { new(1, 0), new(0, 1), new(0, 2), new(0, 3), new(1, 4)} },
                 { 10, new List<SymbolLocation> { new(0, 0), new(1, 1), new(1, 2), new(1, 3), new(0, 4)} }
             };
-
             Symbols = new List<Symbol>();
         }
 
@@ -47,6 +46,9 @@ namespace JoySlots_WPF.ViewModel
                         ScatterStarsLocation.Add(new SymbolLocation(i, reel));
                         stillCounting = true;
                         stars++;
+
+                        // No need to continue searching on the same reel cuz only 1 can be displayed.
+                        break;
                     }
 
                     if (stillCounting == false) break;
@@ -71,6 +73,9 @@ namespace JoySlots_WPF.ViewModel
                     {
                         ScatterDollarsLocation.Add(new SymbolLocation(i, reel));
                         dollars++;
+
+                        // No need to continue searching on the same reel cuz only 1 can be displayed.
+                        break;
                     }
                 }
             }
@@ -89,8 +94,8 @@ namespace JoySlots_WPF.ViewModel
             {
                 for (int i = 0; i < ReelsGrid.RowDefinitions.Count; i++)
                 {
-                    if (ReelsGrid.GetChild(i, reel)!.Source == Wild && !reelsHavingWild.ContainsKey(reel))
-                        reelsHavingWild.Add(reel, true);
+                    if (ReelsGrid.GetChild(i, reel)!.Source == Wild && reelsHavingWild.ContainsKey(reel) == false)
+                    { reelsHavingWild.Add(reel, true); break; }
                 }
             }
 
@@ -108,10 +113,11 @@ namespace JoySlots_WPF.ViewModel
                 {
                     // Get all symbols from the winning line. Wild is included as wiring for symbols.
                     ImageSource currentSymbol = ReelsGrid.GetChild(line.Value[i].row, line.Value[i].column)!.Source;
+
+                    // Check if the symbols related to this line are wired together or by the wild.
                     if (reelsHavingWild.ContainsKey(i) || currentSymbol == startingSymbol)
-                    {
                         symbolsCount++;
-                    }
+                    // Otherwise, no need to continue.
                     else break;
                 }
 
@@ -150,6 +156,7 @@ namespace JoySlots_WPF.ViewModel
             }
             reelsHavingWild.Clear();
 
+            // For logger.
             if (WinningLines.Count > 0)
             {
                 string lineWon = string.Empty;
