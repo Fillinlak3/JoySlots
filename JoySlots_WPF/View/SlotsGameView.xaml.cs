@@ -182,7 +182,6 @@ namespace JoySlots_WPF.View
             if (App.GameSettings.CanSpin == false) return;
 
             // Currently spinning.
-            CancellationTokenSources.Clear();
             App.GameSettings.BurningLinesAnimation = false;
             App.GameSettings.CanSpin = false;
             Status_LB.Content = " MULT NOROC! ";
@@ -200,6 +199,9 @@ namespace JoySlots_WPF.View
             App.Logger.LogInfo("SlotsGameView/SpinButton", "Reels currently spinning.");
             await SpinReelsAsync();
             App.Logger.Log("SlotsGameView/SpinButton", "Stopped spinning reels.");
+            ReelsGrid.GetChild(0, 2)!.Source = Game.Symbols.FirstOrDefault(x => x.Name == "Ali")!.ImageSource;
+            ReelsGrid.GetChild(0, 3)!.Source = Game.Symbols.FirstOrDefault(x => x.Name == "Ali")!.ImageSource;
+            ReelsGrid.GetChild(0, 4)!.Source = Game.Symbols.FirstOrDefault(x => x.Name == "Ali")!.ImageSource;
             await CheckWin();
             Status_LB.Content = " FACEȚI CLICK PE ROTIRE PENTRU A JUCA ";
         }
@@ -210,59 +212,87 @@ namespace JoySlots_WPF.View
             List<WinningLine> WinningLines = await Game.CheckWinningLines(ReelsGrid);
             await Task.Delay(100);
 
-            // Antimation BURNING the winning lines.
+            // Setup, load and run the animations and set player's win amount.
             if (WinningLines.Count > 0)
             {
                 App.Logger.Log("SlotsGameView/CheckWin", "Preparing the animations.");
                 Status_LB.Content = string.Empty;
-                ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;
-                double currentWin = 0;
-                foreach (var line in WinningLines)
-                {
-                    if (Game.MapWinningLines.ContainsKey(line.Line))
-                    {
-                        for (int i = 0; i < line.SymbolsCount; i++)
-                        {
-                            SymbolLocation symbolLocation = Game.MapWinningLines[line.Line][i];
 
-                            /*
-                                BUG SOLVE:
-                                Without this, if an animation was already placed on the same cell, it would place another
-                                on top of it, so this prevents multiple images of animations on the same grid cell.
-                             */
-                            if (ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 1) is not null)
-                                continue;
+                // Setup for the Burning Lines Anim.
+                double CashAmountWon;
+                LoadBurningLinesAnimation(WinningLines, out CashAmountWon);
 
-                            ReelsGrid.SetChild(symbolLocation.row, symbolLocation.column, new Image(), true);
-                            int index = ReelsGrid.Children.Count - 1;
-                            Image animImage = (ReelsGrid.Children[index] as Image)!;
-                            Grid.SetZIndex(animImage, 1);
-                            ImageBehavior.SetAnimatedSource(animImage, burningLinesAnim);
-                        }
-                    }
-                    currentWin += line.CashValue;
-                }
+                // Setup for Money Growing Anim.
                 LastWin_LB.Content = "   CÂȘTIG:  ";
                 LastWinCash_LB.Content = "0.00";
                 LastWin_VB.Visibility = Visibility.Visible;
+                
+                // Create a cancellation token for each animation task.
+                CancellationTokenSources.Add(new CancellationTokenSource());
+                CancellationTokenSources.Add(new CancellationTokenSource());
 
-                CancellationTokenSources.Add(new CancellationTokenSource());
-                CancellationTokenSources.Add(new CancellationTokenSource());
-                // Animation BURN each winning line using the animated outline.
+                // Launch the animations.
                 App.Logger.Log("SlotsGameView/CheckWin", "Launching Money Growing Last Win & Winning Lines animations.");
                 Task animateMoneyGrowing = new Task(async () =>
-                await AnimateMoneyGrowingToLastWinAsync(currentWin, LastWinCash_LB, CancellationTokenSources[1].Token));
+                await AnimateMoneyGrowingToLastWinAsync(CashAmountWon, LastWinCash_LB, CancellationTokenSources[1].Token));
                 animateMoneyGrowing.RunSynchronously();
                 await AnimateWinningLinesAsync(WinningLines, CancellationTokenSources[0].Token);
 
-                App.Player.Balance += currentWin;
+                // Don't forget to add the winning amount to player's balance.
+                App.Player.Balance += CashAmountWon;
                 WinningLines.Clear();
             }
 
-            // Removed cuz it's better to be placed in the spinning button.
-            // Task.Delay(200);
             App.GameSettings.CanSpin = true;
             App.Logger.Log("SlotsGameView/CheckWin", "Game Win succeeded. CanSpin = True");
+        }
+
+        private void LoadBurningLinesAnimation(List<WinningLine> WinningLines, out double CashAmountWon)
+        {
+            ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;
+
+            bool AddAnimationImage(SymbolLocation symbolLocation)
+            {
+                /*
+                            BUG SOLVE:
+                            Without this, if an animation was already placed on the same cell, it would place another
+                            on top of it, so this prevents multiple images of animations on the same grid cell.
+                         */
+                if (ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 1) is not null)
+                    return false;
+
+                ReelsGrid.SetChild(symbolLocation.row, symbolLocation.column, new Image(), true);
+                int index = ReelsGrid.Children.Count - 1;
+                Image animImage = (ReelsGrid.Children[index] as Image)!;
+                Grid.SetZIndex(animImage, 1);
+                ImageBehavior.SetAnimatedSource(animImage, burningLinesAnim);
+                return true;
+            }
+
+            CashAmountWon = 0;
+            foreach (var line in WinningLines)
+            {
+                for (int i = 0; i < line.SymbolsCount; i++)
+                {
+                    SymbolLocation symbolLocation;
+
+                    // For symbols that were wired.
+                    if (line.SymbolsLocation is null)
+                        symbolLocation = Game.MapWinningLines[line.Line][i];
+                    // For SCATTERS ONLY.
+                    else symbolLocation = line.SymbolsLocation[i];
+
+                    /*
+                        Try adding the image where the animation will be displayed
+                        over the winning symbol's image.
+                     */
+                    if (AddAnimationImage(symbolLocation) == false)
+                        continue;
+                }
+
+                // Retrieve the winning line cash amount.
+                CashAmountWon += line.CashValue;
+            }
         }
 
         #region Animations
@@ -341,24 +371,38 @@ namespace JoySlots_WPF.View
                     {
                         if (cancellationToken.IsCancellationRequested) break;
 
-                        Status_LB.Content = $" LINIA {line.Line}   CÂȘTIG {line.CashValue} LEI ";
-                        if (Game.MapWinningLines.ContainsKey(line.Line))
+                        if(line.SymbolsLocation is null)
+                            Status_LB.Content = $" LINIA {line.Line}   CÂȘTIG {line.CashValue} LEI ";
+                        else Status_LB.Content = $" SCATTER   CÂȘTIG {line.CashValue} LEI ";
+
+                        for (int i = 0; i < line.SymbolsCount && !cancellationToken.IsCancellationRequested; i++)
                         {
-                            for (int i = 0; i < line.SymbolsCount && !cancellationToken.IsCancellationRequested; i++)
-                            {
-                                SymbolLocation symbolLocation = Game.MapWinningLines[line.Line][i];
-                                Image animImage = ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 1)!;
-                                ImageBehavior.SetAnimatedSource(animImage, burningLinesOutlinedAnim);
-                            }
+                            SymbolLocation symbolLocation;
 
-                            await Task.Delay(2500, cancellationToken);
+                            // For symbols that were wired.
+                            if (line.SymbolsLocation is null)
+                                symbolLocation = Game.MapWinningLines[line.Line][i];
+                            // For SCATTERS ONLY.
+                            else symbolLocation = line.SymbolsLocation[i];
 
-                            for (int i = 0; i < line.SymbolsCount && !cancellationToken.IsCancellationRequested; i++)
-                            {
-                                SymbolLocation symbolLocation = Game.MapWinningLines[line.Line][i];
-                                Image animImage = ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 1)!;
-                                ImageBehavior.SetAnimatedSource(animImage, burningLinesAnim);
-                            }
+                            Image animImage = ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 1)!;
+                            ImageBehavior.SetAnimatedSource(animImage, burningLinesOutlinedAnim);
+                        }
+
+                        await Task.Delay(2500, cancellationToken);
+
+                        for (int i = 0; i < line.SymbolsCount && !cancellationToken.IsCancellationRequested; i++)
+                        {
+                            SymbolLocation symbolLocation;
+
+                            // For symbols that were wired.
+                            if (line.SymbolsLocation is null)
+                                symbolLocation = Game.MapWinningLines[line.Line][i];
+                            // For SCATTERS ONLY.
+                            else symbolLocation = line.SymbolsLocation[i];
+
+                            Image animImage = ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 1)!;
+                            ImageBehavior.SetAnimatedSource(animImage, burningLinesAnim);
                         }
                     }
                 }
@@ -397,6 +441,12 @@ namespace JoySlots_WPF.View
             catch (Exception) { }
             finally
             {
+                /*
+                    Is recommended to not remove this line from here because what if the user doesn't force stop
+                    the spinning reels? The animations cancellation token source will not be headed right. So better
+                    to leave this here to clear the list after the reels animation is over. It doesn't matter whatsoever
+                    if it's forced stopped or not.
+                 */
                 CancellationTokenSources.Clear();
             }
         }

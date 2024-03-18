@@ -1,4 +1,6 @@
-﻿namespace JoySlots_WPF.Model
+﻿using System.Diagnostics;
+
+namespace JoySlots_WPF.Model
 {
     public readonly struct WinningLine
     {
@@ -15,7 +17,9 @@
             Symbol = symbol;
             Line = line;
             CashValue = symbol.GetValue(symbolsCount);
-            SymbolsLocation = symbolsLocation;
+            if (symbolsLocation is not null)
+                SymbolsLocation = new List<SymbolLocation>(symbolsLocation);
+            else SymbolsLocation = null;
 
             if (CashValue == 0) IsWinningLine = false;
         }
