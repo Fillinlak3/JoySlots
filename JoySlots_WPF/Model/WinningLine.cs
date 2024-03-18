@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace JoySlots_WPF.Model
+﻿namespace JoySlots_WPF.Model
 {
     public readonly struct WinningLine
     {

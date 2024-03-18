@@ -4,7 +4,6 @@
 using JoySlots_WPF.Extensions;
 using JoySlots_WPF.Model;
 using JoySlots_WPF.View.custom_controls;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -199,6 +198,9 @@ namespace JoySlots_WPF.View
             App.Logger.LogInfo("SlotsGameView/SpinButton", "Reels currently spinning.");
             await SpinReelsAsync();
             App.Logger.Log("SlotsGameView/SpinButton", "Stopped spinning reels.");
+            ReelsGrid.GetChild(0, 2)!.Source = Game.Symbols.FirstOrDefault(x => x.Name == "Ali")!.ImageSource;
+            ReelsGrid.GetChild(0, 3)!.Source = Game.Symbols.FirstOrDefault(x => x.Name == "Ali")!.ImageSource;
+            ReelsGrid.GetChild(0, 4)!.Source = Game.Symbols.FirstOrDefault(x => x.Name == "Ali")!.ImageSource;
             await CheckWin();
             Status_LB.Content = " FACEȚI CLICK PE ROTIRE PENTRU A JUCA ";
         }
