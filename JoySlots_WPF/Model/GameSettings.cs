@@ -10,7 +10,7 @@
 
         public double ReelsSpinningSpeed { get; } = 1; // 2.5
         public double ReelsStoppingSpeed { get; } = 18; // 10 def
-        public double MotionBlurIntensity { get; } = 3;
+        public double MotionBlurIntensity { get; } = 5;
 
         public double CreditValue { get; private set; } = 0.01f;
         public double BetValue { get; private set; } = 0.20f;

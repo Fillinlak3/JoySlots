@@ -4,6 +4,7 @@
 using JoySlots_WPF.Extensions;
 using JoySlots_WPF.Model;
 using JoySlots_WPF.View.custom_controls;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -184,6 +185,7 @@ namespace JoySlots_WPF.View
             // Currently spinning.
             App.GameSettings.BurningLinesAnimation = false;
             App.GameSettings.CanSpin = false;
+            CashInButton.Visibility = Visibility.Collapsed;
             Status_LB.Content = " MULT NOROC! ";
             if (LastWin_VB.Visibility == Visibility.Visible)
                 LastWin_LB.Content = "ULTIMUL CÂȘTIG:";
@@ -292,9 +294,18 @@ namespace JoySlots_WPF.View
             }
         }
 
+        private async void CashInButton_Click(object sender, RoutedEventArgs e)
+        {
+            CancellationTokenSources[1] = new CancellationTokenSource();
+            await AnimateMoneyGrowingToBalanceAsync(LastWinCash_LB, BalanceCash_LB, CancellationTokenSources[1].Token);
+        }
+
         #region Animations
         private async Task AnimateMoneyGrowingToBalanceAsync(Label From, Label Where, CancellationToken cancellationToken)
         {
+            App.Logger.Log("SlotsGameView/AnimateMoneyGrowingToBalanceAsync", "Animation running.");
+            App.GameSettings.MoneyGrowingAnimation = true;
+
             /*
                 Trebuie sa IA banii de la From
                 Trebuie sa PUNA banii la Where
@@ -307,16 +318,27 @@ namespace JoySlots_WPF.View
             // Calculate the increment value based on total_winning.
             double incrementValue = (endAmount - startAmount) / numIncrements;
 
-            double sum = 0;
-            for (int i = 0; i <= numIncrements && !cancellationToken.IsCancellationRequested; i++)
+            try
             {
-                sum = startAmount + i * incrementValue;
-                From.Content = $"{Convert.ToDouble(From.Content) - sum:F2}";
-                Where.Content = $"{Convert.ToDouble(Where.Content) + sum:F2}";
-                if (sum >= Convert.ToDouble(From.Content) - 0.001)
-                    break;
-                await Task.Delay(30);
+                for (int i = 0; i <= numIncrements && !cancellationToken.IsCancellationRequested; i++)
+                {
+                    From.Content = $"{endAmount}";
+                    Where.Content = $"{App.Player.Balance}";
+
+                    double sum = startAmount + i * incrementValue;
+                    From.Content = $"{Convert.ToDouble(From.Content) - sum:F2}";
+                    Where.Content = $"{Convert.ToDouble(Where.Content) + sum:F2}";
+                    if (sum >= endAmount - 0.001)
+                        break;
+                    await Task.Delay(10, cancellationToken);
+                }
             }
+            catch(Exception) { }
+
+            From.Content = $"{endAmount:F2}";
+            Where.Content = $"{App.Player.Balance + endAmount:F2}";
+            App.GameSettings.MoneyGrowingAnimation = false;
+            App.Logger.Log("SlotsGameView/AnimateMoneyGrowingToBalanceAsync", "Animation stopped.");
         }
 
         private async Task AnimateMoneyGrowingToLastWinAsync(double From, Label Where, CancellationToken cancellationToken)
@@ -344,13 +366,14 @@ namespace JoySlots_WPF.View
                     Where.Content = $"{sum:F2}";
                     if (sum >= endAmount - 0.001)
                         break;
-                    await Task.Delay(20, cancellationToken);
+                    await Task.Delay(10, cancellationToken);
                 }
             }
             catch(Exception) { }
 
             Where.Content = $"{endAmount:F2}";
             App.GameSettings.MoneyGrowingAnimation = false;
+            CashInButton.Visibility = Visibility.Visible;
             App.Logger.Log("SlotsGameView/AnimateMoneyGrowingToLastWinAsync", "Animation stopped.");
         }
 

@@ -35,11 +35,34 @@
                HorizontalAlignment="Center" VerticalAlignment="Center"/>
         
         <!-- Right-Side Panel -->
-        <Button x:Name="SpinButton" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center"
-                VerticalAlignment="Center" Background="Transparent" BorderThickness="0"
-                Click="SpinButton_Click" Focusable="False">
-            <Image Source="{StaticResource img_SpinButton}" Stretch="Uniform"/>
-        </Button>
+        <Grid Grid.Row="1" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Button x:Name="SpinButton" Grid.Row="1" HorizontalAlignment="Center"
+                    VerticalAlignment="Center" Background="Transparent" BorderThickness="0"
+                    Click="SpinButton_Click" Focusable="False">
+                <Image Source="{StaticResource img_SpinButton}" Stretch="Uniform"/>
+            </Button>
+
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Viewbox Grid.Row="0">
+                <Button x:Name="CashInButton" Grid.Row="0" Background="Transparent"
+                        BorderThickness="0" Click="CashInButton_Click" Focusable="False"
+                        Visibility="Collapsed">
+                    <Image Source="{StaticResource img_CashInButton}" Stretch="Uniform"/>
+                </Button>
+                </Viewbox>
+            </Grid>
+        </Grid>
         
         <Grid Grid.Row="3" Grid.Column="2" Background="Transparent" Margin="10">
             <Grid.RowDefinitions>
