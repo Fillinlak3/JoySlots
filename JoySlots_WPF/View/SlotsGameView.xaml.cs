@@ -225,7 +225,8 @@ namespace JoySlots_WPF.View
                 LastWin_LB.Content = "   CÂȘTIG:  ";
                 LastWinCash_LB.Content = "0.00";
                 LastWin_VB.Visibility = Visibility.Visible;
-                
+                CashInButton.Visibility = Visibility.Visible;
+
                 // Create a cancellation token for each animation task.
                 CancellationTokenSources.Add(new CancellationTokenSource());
                 CancellationTokenSources.Add(new CancellationTokenSource());
@@ -296,8 +297,13 @@ namespace JoySlots_WPF.View
 
         private async void CashInButton_Click(object sender, RoutedEventArgs e)
         {
+            if (CancellationTokenSources[1].IsCancellationRequested == false)
+            { CancellationTokenSources[1].Cancel(); await Task.Delay(10); }
+
             CancellationTokenSources[1] = new CancellationTokenSource();
             await AnimateMoneyGrowingToBalanceAsync(LastWinCash_LB, BalanceCash_LB, CancellationTokenSources[1].Token);
+
+            CashInButton.Visibility = Visibility.Collapsed;
         }
 
         #region Animations
@@ -373,7 +379,6 @@ namespace JoySlots_WPF.View
 
             Where.Content = $"{endAmount:F2}";
             App.GameSettings.MoneyGrowingAnimation = false;
-            CashInButton.Visibility = Visibility.Visible;
             App.Logger.Log("SlotsGameView/AnimateMoneyGrowingToLastWinAsync", "Animation stopped.");
         }
 
