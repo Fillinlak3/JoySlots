@@ -5,7 +5,7 @@ namespace JoySlots_WPF.Extensions
 {
     public static class GridExtension
     {
-        public static Image? GetChild(this Grid grid, int row, int column, int ZIndex = 0)
+        public static Image? GetChild(this Grid grid, int row, int column, int ZIndex = 1)
         {
             foreach (Image child in grid.Children)
             {

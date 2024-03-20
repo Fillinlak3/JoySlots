@@ -4,6 +4,7 @@
 using JoySlots_WPF.Extensions;
 using JoySlots_WPF.Model;
 using JoySlots_WPF.View.custom_controls;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -57,12 +58,41 @@ namespace JoySlots_WPF.View
             }
             App.Logger.LogInfo("SlotsGameView/LoadView", "Gathered symbols from Resources.");
 
+            foreach (var child in ReelsGrid.Children)
+            {
+                if(child is Image img && img is not null)
+                    Grid.SetZIndex(img, 1);
+            }
+
+            /*
+                Remember best margins:
+                TopImage: Margin = new Thickness(5, 70, 5, 0)
+                IncomingImage: Margin = new Thickness(5, -230, 5, 0)
+             */
             for (int j = 0; j < ReelsGrid.ColumnDefinitions.Count; j++)
             {
                 for (int i = 0; i < ReelsGrid.RowDefinitions.Count; i++)
                 {
                     ReelsGrid.GetChild(i, j)!.Source = Game.Symbols.Random("Iris", "Ali", "Jumi");
                 }
+                ReelsGrid.GetChild(0, j)!.Margin = new Thickness(5, 0, 5, 0);
+
+                ReelsGrid.SetChild(0, j, new Image { Margin = new Thickness(5, 0, 5, 0), Stretch = Stretch.None }, true);
+                
+                BitmapSource src = (BitmapSource)Game.Symbols.Random("Iris", "Ali", "Jumi");
+                int width = src.PixelWidth;
+                int height = src.PixelHeight;
+
+                // Calculate the y-coordinate of the top-left corner of the cropping rectangle
+                int y = Math.Max(0, height - 100); // Adjusted to crop 50 pixels from bottom
+
+                // Calculate the height of the cropping rectangle
+                int cropHeight = Math.Min(height, 100);
+
+                // Create and assign the cropped bitmap
+                var croppedBitmap = new CroppedBitmap(src, new Int32Rect(0, y, width, cropHeight));
+                ReelsGrid.GetChild(0, j, 0)!.Source = croppedBitmap;
+                Debug.WriteLine(croppedBitmap.Source);
             }
 
             BalanceCash_LB.Content = $"{App.Player.Balance:F2}";
@@ -264,7 +294,7 @@ namespace JoySlots_WPF.View
                 ReelsGrid.SetChild(symbolLocation.row, symbolLocation.column, new Image(), true);
                 int index = ReelsGrid.Children.Count - 1;
                 Image animImage = (ReelsGrid.Children[index] as Image)!;
-                Grid.SetZIndex(animImage, 1);
+                Grid.SetZIndex(animImage, 2);
                 ImageBehavior.SetAnimatedSource(animImage, burningLinesAnim);
                 return true;
             }
@@ -410,7 +440,7 @@ namespace JoySlots_WPF.View
                             // For SCATTERS ONLY.
                             else symbolLocation = line.SymbolsLocation[i];
 
-                            Image animImage = ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 1)!;
+                            Image animImage = ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 2)!;
                             ImageBehavior.SetAnimatedSource(animImage, burningLinesOutlinedAnim);
                         }
 
@@ -426,7 +456,7 @@ namespace JoySlots_WPF.View
                             // For SCATTERS ONLY.
                             else symbolLocation = line.SymbolsLocation[i];
 
-                            Image animImage = ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 1)!;
+                            Image animImage = ReelsGrid.GetChild(symbolLocation.row, symbolLocation.column, 2)!;
                             ImageBehavior.SetAnimatedSource(animImage, burningLinesAnim);
                         }
                     }
