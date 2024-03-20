@@ -13,15 +13,15 @@
     <BitmapImage x:Key="anim_BurningLines" UriSource="/Resources/Anim/fire_burning.gif"/>
     
     <!-- symbols -->
-    <BitmapImage x:Key="img_SY_Ali" UriSource="/Resources/Images/symbols/Ali.jpg"/>
-    <BitmapImage x:Key="img_SY_Bucurie" UriSource="/Resources/Images/symbols/Bucurie_2.jpeg"/>
-    <BitmapImage x:Key="img_SY_Catanoiu" UriSource="/Resources/Images/symbols/Catanoiu.jpeg"/>
-    <BitmapImage x:Key="img_SY_Gabi" UriSource="/Resources/Images/symbols/Gabi.jpeg"/>
-    <BitmapImage x:Key="img_SY_Iris" UriSource="/Resources/Images/symbols/Iris_2.jpeg"/>
-    <BitmapImage x:Key="img_SY_Jumi" UriSource="/Resources/Images/symbols/Jumi.jpg"/>
-    <BitmapImage x:Key="img_SY_Petru" UriSource="/Resources/Images/symbols/Petru.jpeg"/>
-    <BitmapImage x:Key="img_SY_Rizea" UriSource="/Resources/Images/symbols/Rizea.jpeg"/>
-    <BitmapImage x:Key="img_SY_Robert" UriSource="/Resources/Images/symbols/Robert.jpg"/>
-    <BitmapImage x:Key="img_SY_Rusu" UriSource="/Resources/Images/symbols/Rusu.jpg"/>
-    <BitmapImage x:Key="img_SY_Teo" UriSource="/Resources/Images/symbols/Teo.jpeg"/>
+    <BitmapImage x:Key="img_SY_Ali" UriSource="/Resources/Images/symbols2/scatter_dollar.png"/>
+    <BitmapImage x:Key="img_SY_Jumi" UriSource="/Resources/Images/symbols2/scatter_star.png"/>
+    <BitmapImage x:Key="img_SY_Iris" UriSource="/Resources/Images/symbols2/coroana.png"/>
+    <BitmapImage x:Key="img_SY_Robert" UriSource="/Resources/Images/symbols2/septar.png"/>
+    <BitmapImage x:Key="img_SY_Bucurie" UriSource="/Resources/Images/symbols2/strugure.png"/>
+    <BitmapImage x:Key="img_SY_Teo" UriSource="/Resources/Images/symbols2/pepene.png"/>
+    <BitmapImage x:Key="img_SY_Rizea" UriSource="/Resources/Images/symbols2/clopot.png"/>
+    <BitmapImage x:Key="img_SY_Rusu" UriSource="/Resources/Images/symbols2/cireasa.png"/>
+    <BitmapImage x:Key="img_SY_Catanoiu" UriSource="/Resources/Images/symbols2/pruna.png"/>
+    <BitmapImage x:Key="img_SY_Gabi" UriSource="/Resources/Images/symbols2/lamaie.png"/>
+    <BitmapImage x:Key="img_SY_Petru" UriSource="/Resources/Images/symbols2/portocala.png"/>
 </ResourceDictionary>

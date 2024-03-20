@@ -42,6 +42,17 @@
     <Resource Include="Resources\Images\misc\Volume_Min.png" />
     <Resource Include="Resources\Images\misc\Volume_Mute.png" />
     <Resource Include="Resources\Images\misc\Volume_Sound.png" />
+    <Resource Include="Resources\Images\symbols2\cireasa.png" />
+    <Resource Include="Resources\Images\symbols2\clopot.png" />
+    <Resource Include="Resources\Images\symbols2\coroana.png" />
+    <Resource Include="Resources\Images\symbols2\lamaie.png" />
+    <Resource Include="Resources\Images\symbols2\pepene.png" />
+    <Resource Include="Resources\Images\symbols2\portocala.png" />
+    <Resource Include="Resources\Images\symbols2\pruna.png" />
+    <Resource Include="Resources\Images\symbols2\scatter_dollar.png" />
+    <Resource Include="Resources\Images\symbols2\scatter_star.png" />
+    <Resource Include="Resources\Images\symbols2\septar.png" />
+    <Resource Include="Resources\Images\symbols2\strugure.png" />
     <Resource Include="Resources\Images\symbols\Ali.jpg" />
     <Resource Include="Resources\Images\symbols\Bucurie.jpg" />
     <Resource Include="Resources\Images\symbols\Bucurie_2.jpeg" />
