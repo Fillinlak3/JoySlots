@@ -1,0 +1,90 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Audio\spin_button.wav" />
+    <None Remove="Resources\Images\symbols2\cireasa.png" />
+    <None Remove="Resources\Images\symbols2\clopot.png" />
+    <None Remove="Resources\Images\symbols2\coroana.png" />
+    <None Remove="Resources\Images\symbols2\lamaie.png" />
+    <None Remove="Resources\Images\symbols2\pepene.png" />
+    <None Remove="Resources\Images\symbols2\portocala.png" />
+    <None Remove="Resources\Images\symbols2\pruna.png" />
+    <None Remove="Resources\Images\symbols2\scatter_dollar.png" />
+    <None Remove="Resources\Images\symbols2\scatter_star.png" />
+    <None Remove="Resources\Images\symbols2\septar.png" />
+    <None Remove="Resources\Images\symbols2\strugure.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Command\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Logger\Logger.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Anim\burning_outline_anim.gif" />
+    <Resource Include="Resources\Anim\fire_burning.gif" />
+    <Resource Include="Resources\Audio\spin_button.wav" />
+    <Resource Include="Resources\Images\gamble\black_back.png" />
+    <Resource Include="Resources\Images\gamble\cards_flickering.gif" />
+    <Resource Include="Resources\Images\gamble\Gamble_Win.png" />
+    <Resource Include="Resources\Images\gamble\hearts_symbol.png" />
+    <Resource Include="Resources\Images\gamble\hearts_symbol_big.png" />
+    <Resource Include="Resources\Images\gamble\hearts_symbol_win.png" />
+    <Resource Include="Resources\Images\gamble\red_back.png" />
+    <Resource Include="Resources\Images\gamble\small_card.png" />
+    <Resource Include="Resources\Images\gamble\spades_symbol.png" />
+    <Resource Include="Resources\Images\gamble\spades_symbol_big.png" />
+    <Resource Include="Resources\Images\gamble\spades_symbol_win.png" />
+    <Resource Include="Resources\Images\misc\Background.png" />
+    <Resource Include="Resources\Images\misc\Cash_In.png" />
+    <Resource Include="Resources\Images\misc\Logo.png" />
+    <Resource Include="Resources\Images\misc\Menu_Button.png" />
+    <Resource Include="Resources\Images\misc\Placebet_Buttons_Background.png" />
+    <Resource Include="Resources\Images\misc\Placebet_Buttons_Marked_Background.png" />
+    <Resource Include="Resources\Images\misc\Spin_Button.png" />
+    <Resource Include="Resources\Images\misc\Volume_Mid.png" />
+    <Resource Include="Resources\Images\misc\Volume_Min.png" />
+    <Resource Include="Resources\Images\misc\Volume_Mute.png" />
+    <Resource Include="Resources\Images\misc\Volume_Sound.png" />
+    <Resource Include="Resources\Images\symbols2\cireasa.png" />
+    <Resource Include="Resources\Images\symbols2\clopot.png" />
+    <Resource Include="Resources\Images\symbols2\coroana.png" />
+    <Resource Include="Resources\Images\symbols2\lamaie.png" />
+    <Resource Include="Resources\Images\symbols2\pepene.png" />
+    <Resource Include="Resources\Images\symbols2\portocala.png" />
+    <Resource Include="Resources\Images\symbols2\pruna.png" />
+    <Resource Include="Resources\Images\symbols2\scatter_dollar.png" />
+    <Resource Include="Resources\Images\symbols2\scatter_star.png" />
+    <Resource Include="Resources\Images\symbols2\septar.png" />
+    <Resource Include="Resources\Images\symbols2\strugure.png" />
+    <Resource Include="Resources\Images\symbols\Ali.jpg" />
+    <Resource Include="Resources\Images\symbols\Bucurie.jpg" />
+    <Resource Include="Resources\Images\symbols\Bucurie_2.jpeg" />
+    <Resource Include="Resources\Images\symbols\Bucurie_3.jpeg" />
+    <Resource Include="Resources\Images\symbols\Catanoiu.jpeg" />
+    <Resource Include="Resources\Images\symbols\Gabi.jpeg" />
+    <Resource Include="Resources\Images\symbols\Iris_2.jpeg" />
+    <Resource Include="Resources\Images\symbols\Jumi.jpg" />
+    <Resource Include="Resources\Images\symbols\Petru.jpeg" />
+    <Resource Include="Resources\Images\symbols\Rizea.jpeg" />
+    <Resource Include="Resources\Images\symbols\Robert.jpg" />
+    <Resource Include="Resources\Images\symbols\Rusu.jpg" />
+    <Resource Include="Resources\Images\symbols\Teo.jpeg" />
+  </ItemGroup>
+
+</Project>
