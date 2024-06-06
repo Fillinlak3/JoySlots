@@ -9,25 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Audio\spin_button.wav" />
-    <None Remove="Resources\Images\symbols2\cireasa.png" />
-    <None Remove="Resources\Images\symbols2\clopot.png" />
-    <None Remove="Resources\Images\symbols2\coroana.png" />
-    <None Remove="Resources\Images\symbols2\lamaie.png" />
-    <None Remove="Resources\Images\symbols2\pepene.png" />
-    <None Remove="Resources\Images\symbols2\portocala.png" />
-    <None Remove="Resources\Images\symbols2\pruna.png" />
-    <None Remove="Resources\Images\symbols2\scatter_dollar.png" />
-    <None Remove="Resources\Images\symbols2\scatter_star.png" />
-    <None Remove="Resources\Images\symbols2\septar.png" />
-    <None Remove="Resources\Images\symbols2\strugure.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Command\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
   </ItemGroup>
 

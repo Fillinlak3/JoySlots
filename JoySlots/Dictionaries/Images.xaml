@@ -11,10 +11,6 @@
     <BitmapImage x:Key="img_VolumeMute" UriSource="/Resources/Images/misc/Volume_Mute.png"/>
     <BitmapImage x:Key="img_CashInButton" UriSource="/Resources/Images/misc/Cash_In.png"/>
 
-    <!-- anim -->
-    <BitmapImage x:Key="anim_BurningLinesOutlined" UriSource="/Resources/Anim/burning_outline_anim.gif"/>
-    <BitmapImage x:Key="anim_BurningLines" UriSource="/Resources/Anim/fire_burning.gif"/>
-    
     <!-- symbols -->
     <BitmapImage x:Key="img_SY_Ali" UriSource="/Resources/Images/symbols2/scatter_dollar.png"/>
     <BitmapImage x:Key="img_SY_Jumi" UriSource="/Resources/Images/symbols2/scatter_star.png"/>

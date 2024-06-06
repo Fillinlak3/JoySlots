@@ -31,10 +31,10 @@ namespace JoySlots.View
 
         private void LoadView(object sender, RoutedEventArgs e)
         {
-            foreach (var key in App.Current.Resources.MergedDictionaries[0].Keys)
+            foreach (var key in App.Images.Keys)
             {
                 // Get the resource from the merged resource dictionary
-                var resource = App.Current.Resources.MergedDictionaries[0][key];
+                var resource = App.Images[key];
 
                 // Check if the resource is of type BitmapImage
                 if (resource is BitmapImage bitmapImage && key is string keyname &&
@@ -248,7 +248,7 @@ namespace JoySlots.View
         #region Animations
         private void LoadBurningLinesAnimation(List<WinningLine> WinningLines, out double CashAmountWon)
         {
-            ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;
+            ImageSource burningLinesAnim = (App.Animations["anim_BurningLines"] as BitmapImage)!;
 
             bool AddAnimationImage(SymbolLocation symbolLocation)
             {
@@ -373,8 +373,8 @@ namespace JoySlots.View
         {
             Logger.Log("SlotsGameView/AnimateWinningLinesAsync", "Animation running.");
             App.GameSettings.BurningLinesAnimation = true;
-            ImageSource burningLinesAnim = (this.FindResource("anim_BurningLines") as BitmapImage)!;
-            ImageSource burningLinesOutlinedAnim = (this.FindResource("anim_BurningLinesOutlined") as BitmapImage)!;
+            ImageSource burningLinesAnim = (App.Animations["anim_BurningLines"] as BitmapImage)!;
+            ImageSource burningLinesOutlinedAnim = (App.Animations["anim_BurningLinesOutlined"] as BitmapImage)!;
             try
             {
                 while (!cancellationToken.IsCancellationRequested)

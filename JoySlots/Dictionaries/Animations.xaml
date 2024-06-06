@@ -1,0 +1,6 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <BitmapImage x:Key="anim_BurningLinesOutlined" UriSource="/Resources/Anim/burning_outline_anim.gif"/>
+    <BitmapImage x:Key="anim_BurningLines" UriSource="/Resources/Anim/fire_burning.gif"/>
+</ResourceDictionary>
